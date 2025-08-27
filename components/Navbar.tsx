@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
 import { motion } from "framer-motion"
-import Image from "next/image"
+import Logo from "./Logo"
 
 export function Navbar() {
   return (
@@ -15,17 +15,7 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <Image
-              src="/logo.webp"
-              alt="Clippy logo"
-              width={30}
-              height={30}
-              className="rounded-md"
-            />
-            <span className="text-xl font-bold text-foreground mt-0.5">Clippy</span>
-          </div>
+          <Logo />
 
           {/* Menu links */}
           <div className="hidden md:flex items-center space-x-8">
@@ -56,7 +46,9 @@ export function Navbar() {
             <Button variant="ghost" className="text-foreground hover:bg-primary hover:text-white">
               Login
             </Button>
-            <Button className="bg-primary text-white hover:opacity-90 transition-opacity">
+            <Button
+             variant="default"
+             >
               Sign Up
             </Button>
           </div>
