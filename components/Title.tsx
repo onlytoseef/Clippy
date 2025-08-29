@@ -28,7 +28,7 @@ const Title = ({
         {highlight && <span className="text-primary">{highlight}</span>}
       </h2>
       {subheading && (
-        <p className="text-lg text-foreground/70 max-w-3xl mx-auto">
+        <p className="text-lg text-foreground/80 max-w-3xl mx-auto">
           {subheading}
         </p>
       )}

@@ -4,8 +4,18 @@ import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
 import { motion } from "framer-motion"
 import Logo from "./Logo"
+import Link from "next/link"
 
 export function Navbar() {
+  const navLinks = [
+    { label: "Home", href: "/" },
+    { label: "About", href: "/about" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Contact", href: "/contact" },
+    { label: "Products", href: "/products", dropdown: true },
+    { label: "Integrations", href: "/integrations", dropdown: true },
+  ]
+
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
@@ -19,22 +29,15 @@ export function Navbar() {
 
           {/* Menu links */}
           <div className="hidden md:flex items-center space-x-8">
-            {["Products", "Integrations", "Resources"].map((item) => (
-              <div
-                key={item}
+            {navLinks.map(({ label, href, dropdown }) => (
+              <Link
+                key={label}
+                href={href}
                 className="flex items-center space-x-1 text-foreground hover:text-primary cursor-pointer transition-colors"
               >
-                <span>{item}</span>
-                <ChevronDown className="w-4 h-4" />
-              </div>
-            ))}
-            {["API", "Enterprise", "Pricing"].map((item) => (
-              <span
-                key={item}
-                className="text-foreground hover:text-primary cursor-pointer transition-colors"
-              >
-                {item}
-              </span>
+                <span>{label}</span>
+                {dropdown && <ChevronDown className="w-4 h-4" />}
+              </Link>
             ))}
           </div>
 
@@ -46,11 +49,7 @@ export function Navbar() {
             <Button variant="ghost" className="text-foreground hover:bg-primary hover:text-white">
               Login
             </Button>
-            <Button
-             variant="default"
-             >
-              Sign Up
-            </Button>
+            <Button variant="default">Sign Up</Button>
           </div>
         </div>
       </div>

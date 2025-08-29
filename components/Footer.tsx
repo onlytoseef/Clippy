@@ -25,7 +25,7 @@ export function Footer() {
               viewport={{ once: true }}
             >
               <Logo />
-              <p className="text-foreground/70 mt-3 mb-6 leading-relaxed">
+              <p className="text-foreground/80 mt-3 mb-6 leading-relaxed">
                 The most advanced AI voice generator for creating ultra-realistic voiceovers in seconds. Transform your
                 content with human-like speech.
               </p>
@@ -50,7 +50,7 @@ export function Footer() {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-foreground/70 hover:text-primary transition-colors">
+                    <a href="#" className="text-foreground/80 hover:text-primary transition-colors">
                       {link}
                     </a>
                   </li>
