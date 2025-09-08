@@ -55,44 +55,29 @@ export function FeaturesSection() {
                         return (
                             <motion.div
                                 key={feature.title}
-                                className="group relative"
-                                initial={{ opacity: 0, y: 30 }}
+                                className="group bg-card border border-border rounded-xl p-6 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+                                initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                                 viewport={{ once: true }}
+                                whileHover={{ y: -4 }}
                             >
-                                <motion.div
-                                    className="h-full p-8 rounded-3xl bg-card border border-border/50 backdrop-blur-sm relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30"
-                                    whileHover={{ y: -8 }}
-                                >
-                                    {/* Card background gradient */}
-                                    <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-
-                                    {/* Content */}
-                                    <div className="relative z-10">
-                                        <motion.div
-                                            className="mb-6"
-                                            whileHover={{ scale: 1.1, rotate: 5 }}
-                                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                                        >
-                                            <div className={`w-16 h-16 ${feature.iconBg} rounded-2xl flex items-center justify-center shadow-lg`}>
-                                                <Icon className="w-8 h-8 text-white" />
-                                            </div>
-                                        </motion.div>
-
-                                        <h3 className="text-xl font-bold text-card-foreground mb-4 group-hover:text-foreground transition-colors">
-                                            {feature.title}
-                                        </h3>
-
-                                        <p className="text-card-foreground/80 leading-relaxed text-sm group-hover:text-card-foreground/90 transition-colors">
-                                            {feature.description}
-                                        </p>
+                                {/* Content */}
+                                <div className="relative z-10">
+                                    <div className="mb-6 p-2 bg-muted rounded-lg group-hover:bg-primary/10 transition-colors w-fit">
+                                        <Icon className="w-8 h-8 text-primary" />
                                     </div>
 
-                                    {/* Hover effect line */}
-                                    <div className="absolute bottom-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                                </motion.div>
+                                    <h3 className="text-xl font-bold text-card-foreground mb-4 group-hover:text-foreground transition-colors">
+                                        {feature.title}
+                                    </h3>
+
+                                    <p className="text-card-foreground/80 leading-relaxed text-sm group-hover:text-card-foreground/90 transition-colors">
+                                        {feature.description}
+                                    </p>
+                                </div>
                             </motion.div>
+
                         )
                     })}
                 </div>

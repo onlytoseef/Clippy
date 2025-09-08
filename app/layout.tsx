@@ -1,6 +1,5 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Navbar } from "@/components/Navbar"
 import "./globals.css"
 import { Footer } from "@/components/Footer"
 
@@ -19,7 +18,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Navbar />
         {children}
         <Footer />
       </body>
