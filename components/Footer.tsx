@@ -14,7 +14,7 @@ const footerLinks = {
 export function Footer() {
   return (
     <footer className="bg-background border-t border-border">
-      <div className="container mx-auto px-4 pt-20 pb-8">
+      <div className="container mx-auto pl-10 pr-4 pt-20 pb-8">
         <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-2">
@@ -62,7 +62,9 @@ export function Footer() {
 
         {/* Bottom Section */}
         <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-foreground/60 text-sm">© 2024 Clippy. All rights reserved.</p>
+          <p className="text-foreground/60 text-sm">
+            © {new Date().getFullYear()} Clippy. All rights reserved.
+          </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-foreground/60 hover:text-primary transition-colors">
               Twitter

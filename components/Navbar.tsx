@@ -1,12 +1,15 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ChevronDown } from "lucide-react"
-import { motion } from "framer-motion"
+import { ChevronDown, Menu, X } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import Logo from "./Logo"
 import Link from "next/link"
+import { useState } from "react"
 
 export function Navbar() {
+  const [mobileOpen, setMobileOpen] = useState(false)
+
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
@@ -27,7 +30,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           <Logo />
 
-          {/* Menu links */}
+          {/* Desktop links */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map(({ label, href, dropdown }) => (
               <Link
@@ -41,18 +44,75 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center space-x-3">
+          {/* Desktop actions */}
+          <div className="hidden md:flex items-center space-x-3">
             <Button variant="ghost" className="text-foreground hover:bg-primary hover:text-white">
               Contact Sales
             </Button>
-            <Button variant="ghost" className="text-foreground hover:bg-primary hover:text-white">
-              Login
-            </Button>
-            <Button variant="default">Sign Up</Button>
+             <Link href="/auth/login">
+                <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/auth/signup">
+                <Button variant="default" className="w-full">
+                  Sign Up
+                </Button>
+              </Link>
           </div>
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden text-foreground hover:text-primary transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile dropdown menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-background/95 backdrop-blur-md border-t border-border px-4 pt-4 pb-6 space-y-4"
+          >
+            <div className="flex flex-col space-y-4">
+              {navLinks.map(({ label, href, dropdown }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  className="flex items-center justify-between text-foreground hover:text-primary transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <span>{label}</span>
+                  {dropdown && <ChevronDown className="w-4 h-4" />}
+                </Link>
+              ))}
+            </div>
+
+            <div className="flex flex-col space-y-3 pt-4 border-t border-border">
+              <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
+                Contact Sales
+              </Button>
+              <Link href="/auth/login">
+                <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/auth/signup">
+                <Button variant="default" className="w-full">
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   )
 }

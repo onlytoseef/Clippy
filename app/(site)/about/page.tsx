@@ -97,12 +97,11 @@ export default function AboutPage() {
             >
               <h2 className="text-4xl font-bold text-primary mb-4">Our Mission</h2>
               <p className="text-lg text-foreground leading-relaxed mb-6">
-                At Clippy, we believe that everyone should have access to professional-quality voice content.
-                Our mission is to democratize voice technology, making it simple for creators, businesses,
-                and individuals to produce engaging audio content without the traditional barriers of cost and complexity.
+                At Clippy, our mission is simple
+                to unlock limitless creativity for everyone, everywhere. We believe AI should make content creation faster, more affordable, and more enjoyable. Whether you’re a solo creator, a startup, or an established brand, Clippy gives you the tools to create content that stands out.
               </p>
               <p className="text-lg text-foreground leading-relaxed">
-                We&apos;re building the future of content creation, where your ideas can be brought to life with just a few clicks.
+                We&apos;re driven by innovation, guided by simplicity, and inspired by you—the creators shaping the future.
               </p>
             </motion.div>
 
@@ -184,6 +183,8 @@ export default function AboutPage() {
                   <Image
                     src={member.image || "/placeholder.svg"}
                     alt={member.name}
+                    width={18}
+                    height={18}
                     className="w-full h-full object-cover"
                   />
                 </div>
