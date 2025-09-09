@@ -128,7 +128,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-14 pb-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <Title
             heading="Simple, Transparent"

@@ -2,14 +2,13 @@
 
 import { motion } from "framer-motion"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
-import Link from "next/link"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoginFormData, loginSchema } from "@/validations/auth"
 import Image from "next/image"
 import { signIn } from "@/auth"
-
+import Footer from "../auth/footer"
 
 export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false)
@@ -209,19 +208,10 @@ export default function LoginForm() {
                                 </button>
                             </div>
 
-
                             {/* Sign Up */}
-                            <div className="text-center">
-                                <p className="text-foreground/70 text-sm">
-                                    Don&apos;t have an account?{" "}
-                                    <Link
-                                        href="/auth/signup"
-                                        className="font-medium text-accent hover:text-primary transition-colors"
-                                    >
-                                        Sign up
-                                    </Link>
-                                </p>
-                            </div>
+                            <Footer
+                                type="login"
+                            />
                         </form>
                     </div>
                 </div>
