@@ -1,17 +1,16 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Eye, EyeOff, Mail, Lock } from "lucide-react"
-import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoginFormData, loginSchema } from "@/validations/auth"
-import Image from "next/image"
 import { signIn } from "@/auth"
 import Footer from "../auth/footer"
+import { Input } from "../ui/input"
+import Header from "../auth/header"
+import Title from "../auth/Title"
 
 export default function LoginForm() {
-    const [showPassword, setShowPassword] = useState(false)
     const {
         register,
         handleSubmit,
@@ -37,99 +36,38 @@ export default function LoginForm() {
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-4xl bg-card rounded-2xl shadow-xl overflow-hidden border border-border"
             >
-                <div className="flex flex-col md:flex-row">
+                <div className="flex flex-col md:flex-row md:h-[calc(100vh-2rem)]">
                     {/* Left side */}
-                    <div className="w-full md:w-3/6 bg-primary/5 p-8 flex flex-col justify-center items-center">
-                        <div className="mb-6">
-                            <Image
-                                src="/logo.webp"
-                                alt="Logo"
-                                width={16}
-                                height={16}
-                                className="w-16 h-16 object-contain"
-                            />
-                        </div>
-                        <h1 className="text-2xl font-semibold text-primary mb-2">Login</h1>
-                        <p className="text-foreground/70 text-sm text-center">
-                            Access your account to continue
-                        </p>
-                    </div>
+                    <Header
+                        title="Login"
+                        subTitle="Access your account to continue"
+                    />
 
                     {/* Right side form */}
                     <div className="w-full md:w-3/5 p-8">
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                            {/* Header */}
-                            <div>
-                                <h2 className="text-xl font-semibold text-primary">Welcome back</h2>
-                                <p className="text-foreground/70 text-sm">Sign in to your account</p>
-                            </div>
+                            <Title
+                                title="Welcome back"
+                                subTitle="Sign in to your account"
+                            />
+                            <Input
+                                id="email"
+                                type="email"
+                                label="Email"
+                                placeholder="Enter your email"
+                                {...register("email")}
+                                error={errors.email?.message}
+                            />
 
-                            {/* Email */}
-                            <div className="space-y-2">
-                                <label
-                                    htmlFor="email"
-                                    className="block text-sm font-medium text-primary"
-                                >
-                                    Email
-                                </label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Mail className="h-4 w-4 text-foreground/50" />
-                                    </div>
-                                    <input
-                                        id="email"
-                                        type="email"
-                                        autoComplete="email"
-                                        {...register("email")}
-                                        className="block w-full pl-10 pr-3 py-3 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent bg-input text-foreground placeholder-foreground/50 transition-colors"
-                                        placeholder="Enter your email"
-                                    />
-                                </div>
-                                {errors.email && (
-                                    <p className="text-red-500 text-xs">{errors.email.message}</p>
-                                )}
-                            </div>
+                            <Input
+                                id="password"
+                                type="password"
+                                label="Password"
+                                placeholder="Enter your password"
+                                {...register("password")}
+                                error={errors.password?.message}
+                            />
 
-                            {/* Password */}
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <label
-                                        htmlFor="password"
-                                        className="block text-sm font-medium text-primary"
-                                    >
-                                        Password
-                                    </label>
-                                </div>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Lock className="h-4 w-4 text-foreground/50" />
-                                    </div>
-                                    <input
-                                        id="password"
-                                        type={showPassword ? "text" : "password"}
-                                        autoComplete="current-password"
-                                        {...register("password")}
-                                        className="block w-full pl-10 pr-12 py-3 border border-border rounded-lg focus:border-accent bg-input text-foreground placeholder-foreground/50 transition-colors"
-                                        placeholder="Enter your password"
-                                    />
-                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="text-foreground/50 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-accent rounded-md p-1 transition-colors"
-                                        >
-                                            {showPassword ? (
-                                                <EyeOff className="h-4 w-4" />
-                                            ) : (
-                                                <Eye className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-                                {errors.password && (
-                                    <p className="text-red-500 text-xs">{errors.password.message}</p>
-                                )}
-                            </div>
 
                             {/* Remember me */}
                             <div className="flex items-center justify-between">

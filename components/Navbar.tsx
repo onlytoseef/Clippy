@@ -49,16 +49,14 @@ export function Navbar() {
             <Button variant="ghost" className="text-foreground hover:bg-primary hover:text-white">
               Contact Sales
             </Button>
-             <Link href="/auth/login">
-                <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button variant="default" className="w-full">
-                  Sign Up
-                </Button>
-              </Link>
+            <Link href="/auth/login">
+              <Button
+                variant="default"
+                size="lg"
+              >
+                Log In / Sign Up
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
