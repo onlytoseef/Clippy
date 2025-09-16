@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 import AnimatedNumber from "./animations/AnimatedNumber"
 import { cn } from "@/lib/utils"
 
-const Card = ({ type }: { type: "stats" | "home" | "values" }) => {
+const Card = ({ type }: { type: "stats" | "home" | "about" }) => {
     const data =
         type === "stats" ? stats : type === "home" ? features : values
 
@@ -31,7 +31,7 @@ const Card = ({ type }: { type: "stats" | "home" | "values" }) => {
                                     className={cn(
                                         "mb-6 p-2 rounded-lg transition-colors w-fit",
                                         type === "home" && "bg-muted hover:bg-primary/10",
-                                        type === "values" && "bg-accent hover:bg-accent/80",
+                                        type === "about" && "bg-accent hover:bg-accent/80",
                                         type === "stats" && "bg-muted mb-4"
                                     )}
                                 >
@@ -40,7 +40,7 @@ const Card = ({ type }: { type: "stats" | "home" | "values" }) => {
                                             "w-8 h-8",
                                             type === "stats" && `${feature.color} h-6 w-6`,
                                             type === "home" && "text-primary",
-                                            type === "values" && "text-white"
+                                            type === "about" && "text-white"
                                         )}
                                     />
                                 </div>
@@ -58,7 +58,7 @@ const Card = ({ type }: { type: "stats" | "home" | "values" }) => {
                                     "text-xl font-bold mb-4",
                                     type === "stats" && "text-foreground mb-1",
                                     type === "home" && "text-foreground",
-                                    type === "values" && "text-primary"
+                                    type === "about" && "text-primary"
                                 )}
                             >
                                 {feature.title}
