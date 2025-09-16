@@ -3,66 +3,42 @@
 import type React from "react"
 
 import { motion } from "framer-motion"
-import { Mail, Phone, MapPin, Clock, Send } from "lucide-react"
+import { Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Textarea } from "@/components/ui/textarea"
 import Title from "@/components/Title"
+import { contactInfo } from "@/data/Contact"
+import { ContactFormData, contactSchema } from "@/validations/contact"
 
-const contactInfo = [
-  {
-    icon: Mail,
-    title: "Email Us",
-    details: "support@clippy.ai",
-    description: "Send us an email anytime",
-  },
-  {
-    icon: Phone,
-    title: "Call Us",
-    details: "+1 (555) 123-4567",
-    description: "Mon-Fri from 8am to 6pm",
-  },
-  {
-    icon: MapPin,
-    title: "Visit Us",
-    details: "Islamabad",
-    description: "Come say hello at our office",
-  },
-  {
-    icon: Clock,
-    title: "Business Hours",
-    details: "Mon-Fri: 8am-6pm PST",
-    description: "We're here to help",
-  },
-]
+
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    subject: "",
-    message: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      company: "",
+      subject: "",
+      message: "",
+    },
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle form submission
-    console.log("Form submitted:", formData)
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }))
+  const onSubmit = (data: ContactFormData) => {
+    console.log("Form submitted:", data)
   }
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="pt-32 px-4">
+      <section className="pt-14 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <Title
             heading="Get in"
@@ -76,7 +52,7 @@ export default function ContactPage() {
       {/* Contact Info Cards */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-           {/* Contact Form */}
+          {/* Contact Form */}
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -86,7 +62,7 @@ export default function ContactPage() {
             >
               <h2 className="text-3xl font-bold text-primary mb-3">Send us a Message</h2>
               <p className="text-lg text-forground/80 mb-8 leading-relaxed">
-                Fill out the form below and we`&apos;ll get back to you within 24 hours. For urgent matters, please call us
+                Fill out the form below and we&apos;ll get back to you within 24 hours. For urgent matters, please call us
                 directly.
               </p>
 
@@ -128,70 +104,40 @@ export default function ContactPage() {
               viewport={{ once: true }}
               className="bg-card rounded-xl p-8 border border-border"
             >
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-primary mb-2">
-                      Full Name *
-                    </label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="bg-background/40 border-border focus:border-accent"
-                      placeholder="Your full name"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-primary mb-2">
-                      Email Address *
-                    </label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="bg-background/40 border-border focus:border-accent"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-primary mb-2">
-                    Company (Optional)
-                  </label>
                   <Input
-                    id="company"
-                    name="company"
-                    type="text"
-                    value={formData.company}
-                    onChange={handleChange}
-                    className="bg-background/40 border-border focus:border-accent"
-                    placeholder="Your company name"
+                    id="name"
+                    label="Full Name *"
+                    placeholder="Your full name"
+                    error={errors.name?.message}
+                    {...register("name")}
+                  />
+                  <Input
+                    id="email"
+                    type="email"
+                    label="Email Address *"
+                    placeholder="your@email.com"
+                    error={errors.email?.message}
+                    {...register("email")}
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-primary mb-2">
-                    Subject *
-                  </label>
-                  <Input
-                    id="subject"
-                    name="subject"
-                    type="text"
-                    required
-                    value={formData.subject}
-                    onChange={handleChange}
-                    className="bg-background/40 border"
-                    placeholder="What can we help you with?"
-                  />
-                </div>
+                <Input
+                  id="company"
+                  label="Company (Optional)"
+                  placeholder="Your company name"
+                  error={errors.company?.message}
+                  {...register("company")}
+                />
+
+                <Input
+                  id="subject"
+                  label="Subject *"
+                  placeholder="What can we help you with?"
+                  error={errors.subject?.message}
+                  {...register("subject")}
+                />
 
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-primary mb-2">
@@ -199,14 +145,13 @@ export default function ContactPage() {
                   </label>
                   <Textarea
                     id="message"
-                    name="message"
-                    required
                     rows={5}
-                    value={formData.message}
-                    onChange={handleChange}
-                    className="bg-background/40 border-border"
                     placeholder="Tell us more about your inquiry..."
+                    {...register("message")}
                   />
+                  {errors.message && (
+                    <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>
+                  )}
                 </div>
 
                 <Button
@@ -219,6 +164,8 @@ export default function ContactPage() {
               </form>
             </motion.div>
           </div>
+
+          {/* Contact Info Cards */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-20">
             {contactInfo.map((info, index) => (
               <motion.div
@@ -237,7 +184,7 @@ export default function ContactPage() {
                 <p className="text-foreground/80 text-sm">{info.description}</p>
               </motion.div>
             ))}
-          </div> 
+          </div>
         </div>
       </section>
     </div>

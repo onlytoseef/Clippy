@@ -24,7 +24,7 @@ export function Navbar() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border"
+      className="sticky top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -49,16 +49,14 @@ export function Navbar() {
             <Button variant="ghost" className="text-foreground hover:bg-primary hover:text-white">
               Contact Sales
             </Button>
-             <Link href="/auth/login">
-                <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button variant="default" className="w-full">
-                  Sign Up
-                </Button>
-              </Link>
+            <Link href="/auth/login">
+              <Button
+                variant="default"
+                size="lg"
+              >
+                Log In / Sign Up
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}

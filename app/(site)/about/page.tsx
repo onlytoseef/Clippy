@@ -1,56 +1,11 @@
 "use client"
 
+import Card from "@/components/Card"
 import Title from "@/components/Title"
+import { team } from "@/data/Team"
 import { motion } from "framer-motion"
-import { Users, Target, Award, Zap } from "lucide-react"
 import Image from "next/image"
 
-const values = [
-  {
-    icon: Target,
-    title: "Innovation First",
-    description:
-      "We push the boundaries of AI voice technology to deliver cutting-edge solutions that transform how you create content.",
-  },
-  {
-    icon: Users,
-    title: "User-Centric",
-    description:
-      "Every feature is designed with our users in mind, ensuring intuitive experiences and powerful results.",
-  },
-  {
-    icon: Award,
-    title: "Quality Excellence",
-    description:
-      "We maintain the highest standards in voice quality, ensuring every generated voice sounds natural and professional.",
-  },
-  {
-    icon: Zap,
-    title: "Speed & Efficiency",
-    description: "Our advanced AI processes deliver high-quality voice generation in seconds, not hours.",
-  },
-]
-
-const team = [
-  {
-    name: "Sarah Chen",
-    role: "CEO & Co-Founder",
-    image: "/professional-woman-avatar.png",
-    description: "Former AI researcher at Google with 10+ years in voice technology.",
-  },
-  {
-    name: "Marcus Johnson",
-    role: "CTO & Co-Founder",
-    image: "/profile-img4.webp",
-    description: "Machine learning expert who led voice AI projects at Microsoft.",
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "Head of Product",
-    image: "/profile-img5.webp",
-    description: "Product strategist with expertise in user experience and AI applications.",
-  },
-]
 
 const stats = [
   {
@@ -74,7 +29,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="pt-32 pb-10 px-4">
+      <section className="pt-14 pb-10 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <Title
             heading="About"
@@ -140,24 +95,10 @@ export default function AboutPage() {
             subheading="The principles that guide everything we do at Clippy"
           />
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-card rounded-xl p-6 border border-border hover:border-accent transition-colors"
-              >
-                <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-4">
-                  <value.icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-primary mb-1">{value.title}</h3>
-                <p className="text-foreground/80 leading-relaxed">{value.description}</p>
-              </motion.div>
-            ))}
-          </div>
+          <Card
+            type="about"
+          />
+
         </div>
       </section>
 

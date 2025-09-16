@@ -86,8 +86,8 @@ export function VoicesSection() {
                                         <Image
                                             src={voice.avatar || "/placeholder.svg"}
                                             alt={voice.name}
-                                            width={14}
-                                            height={14}
+                                            width={260}
+                                            height={260}
                                             className="w-14 h-14 rounded-full object-cover ring-2 ring-primary/40 group-hover:ring-primary transition-all duration-300"
                                         />
                                     </div>

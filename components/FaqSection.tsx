@@ -73,7 +73,7 @@ export function FaqSection() {
             >
               {faqs.map((faq, index) => {
                 const isOpen = openItem === faq.id
-                const Icon = faq.icon
+                // const Icon = faq.icon
 
                 return (
                   <motion.div
@@ -90,20 +90,10 @@ export function FaqSection() {
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-4 flex-1 min-w-0">
-                          <div
-                            className={`p-2 rounded-lg ${isOpen ? "bg-primary/10" : "bg-muted"
-                              } transition-colors group-hover:bg-primary/10`}
-                          >
-                            <Icon
-                              className={`w-5 h-5 ${isOpen
-                                ? "text-primary"
-                                : "text-foreground/60"
-                                } group-hover:text-primary transition-colors`}
-                            />
-                          </div>
+
                           <div className="flex-1 min-w-0">
                             <h3
-                              className={`font-semibold text-card-foreground group-hover:text-foreground transition-colors ${isOpen ? "text-foreground" : ""
+                              className={`font-semibold text-foreground group-hover:text-foreground transition-colors ${isOpen ? "text-foreground" : ""
                                 }`}
                             >
                               {faq.question}
@@ -136,7 +126,7 @@ export function FaqSection() {
                           className="overflow-hidden"
                         >
                           <div className="px-6 pb-6">
-                            <div className="ml-12 pt-2 border-t border-border/30">
+                            <div className="mx-2 pt-2 border-t border-border/30">
                               <p className="text-card-foreground/80 leading-relaxed pt-4">
                                 {faq.answer}
                               </p>

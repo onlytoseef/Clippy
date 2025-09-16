@@ -11,7 +11,7 @@ export function HeroSection() {
     <section className="relative min-h-screen bg-background overflow-hidden">
       <AnimatedWaves />
 
-      <div className="relative z-10 container mx-auto px-4 pt-30 pb-16">
+      <div className="relative z-10 container mx-auto px-4 pt-14 pb-16">
         <div className="max-w-4xl mx-auto text-center">
           <Title
             heading="AI Voice Generator with Ultra-Realistic"
