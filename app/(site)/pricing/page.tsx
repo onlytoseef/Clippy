@@ -3,124 +3,12 @@
 import { useState } from "react"
 
 import { motion } from "framer-motion"
-import { Check, Star, Zap, Crown, Building } from "lucide-react"
+import { Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Title from "@/components/Title"
-
-const plans = [
-  {
-    name: "Free",
-    price: 0,
-    period: "month",
-    yearlyPrice: 0,
-    description: "Perfect for trying out Clippy",
-    icon: Star,
-    features: [
-      "10 voice generations per month",
-      "5 minutes of audio per month",
-      "Basic voice selection",
-      "Standard quality output",
-      "Community support",
-    ],
-    limitations: ["Clippy watermark included", "No commercial usage rights", "Limited voice styles"],
-    buttonText: "Get Started Free",
-    buttonVariant: "outline" as const,
-    popular: false,
-  },
-  {
-    name: "Creator",
-    price: 19,
-    period: "month",
-    yearlyPrice: 190,
-    description: "For content creators and freelancers",
-    icon: Zap,
-    features: [
-      "500 voice generations per month",
-      "10 hours of audio per month",
-      "50+ premium voices",
-      "High-quality output",
-      "Email support",
-      "No watermark",
-      "Commercial usage rights",
-      "Voice speed control",
-      "Multiple export formats",
-    ],
-    buttonText: "Start Creating",
-    buttonVariant: "default" as const,
-    popular: true,
-  },
-  {
-    name: "Business",
-    price: 49,
-    period: "month",
-    yearlyPrice: 490,
-    description: "For growing businesses and teams",
-    icon: Building,
-    features: [
-      "Unlimited voice generations",
-      "50 hours of audio per month",
-      "100+ premium voices",
-      "Ultra-high quality output",
-      "Priority support",
-      "Team collaboration (5 seats)",
-      "Advanced voice customization",
-      "API access",
-      "Custom voice cloning (3 voices)",
-      "Analytics dashboard",
-      "White-label options",
-    ],
-    buttonText: "Scale Your Business",
-    buttonVariant: "default" as const,
-    popular: false,
-  },
-  {
-    name: "Enterprise",
-    price: null,
-    period: "custom",
-    yearlyPrice: null,
-    description: "For large organizations",
-    icon: Crown,
-    features: [
-      "Unlimited everything",
-      "Unlimited team members",
-      "Custom voice development",
-      "Dedicated account manager",
-      "24/7 phone support",
-      "SLA guarantees",
-      "On-premise deployment",
-      "Custom integrations",
-      "Advanced security features",
-      "Training and onboarding",
-    ],
-    buttonText: "Contact Sales",
-    buttonVariant: "outline" as const,
-    popular: false,
-  },
-]
-
-const faqs = [
-  {
-    question: "Can I change my plan anytime?",
-    answer:
-      "Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate any billing differences.",
-  },
-  {
-    question: "What happens if I exceed my monthly limits?",
-    answer:
-      "You'll receive notifications as you approach your limits. You can either upgrade your plan or purchase additional credits to continue using the service.",
-  },
-  {
-    question: "Do you offer refunds?",
-    answer:
-      "We offer a 30-day money-back guarantee for all paid plans. If you're not satisfied, contact our support team for a full refund.",
-  },
-  {
-    question: "Can I use generated voices commercially?",
-    answer:
-      "Yes, all paid plans include commercial usage rights. The free plan is for personal use only and includes a watermark.",
-  },
-]
+import FaqList from "@/components/FaqList"
+import { plans } from "@/data/PricingPlans"
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false)
@@ -229,7 +117,7 @@ export default function PricingPage() {
                       </li>
                     ))}
                   </ul>
-                    
+
                   {plan.limitations && (
                     <div className="pt-4 border-t border-border">
                       <h5 className="text-sm font-medium text-primary mb-2">Limitations:</h5>
@@ -257,21 +145,10 @@ export default function PricingPage() {
             highlight="Questions"
             subheading="Everything you need to know about our pricing and plans"
           />
-          <div className="space-y-6">
-            {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-card rounded-xl p-6 border border-border"
-              >
-                <h3 className="text-lg font-semibold text-primary mb-3">{faq.question}</h3>
-                <p className="text-foreground/80 leading-relaxed">{faq.answer}</p>
-              </motion.div>
-            ))}
-          </div>
+
+          <FaqList
+            type="pricing"
+          />
         </div>
       </section>
     </div>

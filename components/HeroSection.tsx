@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { VoiceDemoCard } from "./VideoDemoCard"
-import { AnimatedWaves } from "./AnimatedWaves"
+import { AnimatedWaves } from "./animations/AnimatedWaves"
 import Title from "./Title"
 
 export function HeroSection() {

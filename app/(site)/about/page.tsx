@@ -124,8 +124,8 @@ export default function AboutPage() {
                   <Image
                     src={member.image || "/placeholder.svg"}
                     alt={member.name}
-                    width={18}
-                    height={18}
+                    width={260}
+                    height={260}
                     className="w-full h-full object-cover"
                   />
                 </div>

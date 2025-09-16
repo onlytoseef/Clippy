@@ -2,6 +2,7 @@ import { Mic, Zap, Globe, Shield } from "lucide-react"
 
 export const features = [
     {
+        id : 1,
         icon: Mic,
         title: "Ultra-Realistic Voices",
         description:
@@ -10,6 +11,7 @@ export const features = [
         iconBg: "bg-gradient-to-br from-primary to-primary/80"
     },
     {
+        id : 2,
         icon: Zap,
         title: "Lightning Fast",
         description:
@@ -18,6 +20,7 @@ export const features = [
         iconBg: "bg-gradient-to-br from-accent to-accent/80"
     },
     {
+        id : 3,
         icon: Globe,
         title: "120+ Languages",
         description: "Create content in multiple languages with native-sounding voices for global reach and accessibility.",
@@ -25,6 +28,7 @@ export const features = [
         iconBg: "bg-gradient-to-br from-primary/90 to-foreground"
     },
     {
+        id : 4,
         icon: Shield,
         title: "Enterprise Ready",
         description:

@@ -68,8 +68,8 @@ export function TestimonialsSection() {
                 <Image
                   src={testimonial.avatar || "/placeholder.svg"}
                   alt={testimonial.name}
-                  width={12}
-                  height={12}
+                  width={260}
+                  height={260}
                   className="w-12 h-12 rounded-full mr-4"
                 />
                 <div>
