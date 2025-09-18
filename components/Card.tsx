@@ -6,13 +6,23 @@ import { motion } from "framer-motion"
 import AnimatedNumber from "./animations/AnimatedNumber"
 import { cn } from "@/lib/utils"
 
+type FeatureType = {
+    id: string | number
+    title: string
+    description: string
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+    color?: string
+    number?: number
+    suffix?: string
+  }
+
 const Card = ({ type }: { type: "stats" | "home" | "about" }) => {
     const data =
         type === "stats" ? stats : type === "home" ? features : values
 
     return (
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {data.map((feature: any, index) => {
+            {data.map((feature: FeatureType, index) => {
                 const Icon = feature.icon
 
                 return (
@@ -47,7 +57,7 @@ const Card = ({ type }: { type: "stats" | "home" | "about" }) => {
 
                                 {type === "stats" && (
                                     <div className={cn("text-2xl md:text-3xl font-bold", feature.color)}>
-                                        <AnimatedNumber number={feature.number} suffix={feature.suffix} />
+                                        <AnimatedNumber number={feature.number || 0} suffix={feature.suffix} />
                                     </div>
                                 )}
                             </div>
