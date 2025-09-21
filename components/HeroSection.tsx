@@ -39,11 +39,7 @@ export function HeroSection() {
               Contact Sales
             </Button>
 
-            <Button
-              variant="outline"
-              size="xl">
-              View API Specs
-            </Button>
+           
           </motion.div>
 
           <motion.div
