@@ -110,10 +110,10 @@ export default function AboutPage() {
             highlight="Team"
             subheading="The passionate individuals behind Clippy's innovation"
           />
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-4 gap-8">
             {team.map((member, index) => (
               <motion.div
-                key={member.name}
+                key={member.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -124,8 +124,8 @@ export default function AboutPage() {
                   <Image
                     src={member.image || "/placeholder.svg"}
                     alt={member.name}
-                    width={18}
-                    height={18}
+                    width={260}
+                    height={260}
                     className="w-full h-full object-cover"
                   />
                 </div>

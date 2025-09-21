@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { VoiceDemoCard } from "./VideoDemoCard"
-import { AnimatedWaves } from "./AnimatedWaves"
+import { AnimatedWaves } from "./animations/AnimatedWaves"
 import Title from "./Title"
 
 export function HeroSection() {
@@ -39,11 +39,7 @@ export function HeroSection() {
               Contact Sales
             </Button>
 
-            <Button
-              variant="outline"
-              size="xl">
-              View API Specs
-            </Button>
+           
           </motion.div>
 
           <motion.div

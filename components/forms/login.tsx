@@ -9,6 +9,7 @@ import Footer from "../auth/footer"
 import { Input } from "../ui/input"
 import Header from "../auth/header"
 import Title from "../auth/Title"
+import { Button } from "../ui/button"
 
 export default function LoginForm() {
     const {
@@ -44,8 +45,8 @@ export default function LoginForm() {
                     />
 
                     {/* Right side form */}
-                    <div className="w-full md:w-3/5 p-8">
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="w-full md:w-3/5 p-8 flex flex-col justify-center">
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
                             <Title
                                 title="Welcome back"
                                 subTitle="Sign in to your account"
@@ -80,7 +81,7 @@ export default function LoginForm() {
                                     />
                                     <label
                                         htmlFor="rememberMe"
-                                        className="ml-2 pb-1 block text-sm text-foreground/80"
+                                        className="ml-2 block text-sm text-foreground/80"
                                     >
                                         Remember me
                                     </label>
@@ -95,12 +96,13 @@ export default function LoginForm() {
 
                             {/* Submit */}
                             <div className="pt-2">
-                                <button
-                                    type="submit"
-                                    className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-all duration-200"
+                                <Button
+                                    variant="default"
+                                    size="xl"
+                                    className="w-full rounded-full"
                                 >
                                     Sign in
-                                </button>
+                                </Button>
                             </div>
 
                             {/* Divider */}

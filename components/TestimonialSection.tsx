@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Star } from "lucide-react"
+import {Quote } from "lucide-react"
 import Image from "next/image"
 import Title from "./Title"
 
@@ -37,47 +37,68 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="py-10 bg-background">
-      <div className="container mx-auto px-4">
+    <section className="py-16 bg-background relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-accent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
         <Title
           heading="What Our"
           highlight="Customers Say"
           subheading="Join thousands of satisfied customers who trust Clippy for their voice generation needs"
         />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.name}
-              className="bg-card rounded-2xl p-6 border border-border hover:shadow-lg transition-all duration-300"
+              className="group relative"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              whileHover={{ y: -5 }}
             >
-              <div className="flex items-center mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-accent fill-current" />
-                ))}
-              </div>
+              <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-8 border border-border/50 hover:border-accent/50 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-accent/10 relative overflow-hidden">
 
-              <p className="text-foreground/80 mb-6 leading-relaxed">&quot;{testimonial.content}&quot;</p>
-
-              <div className="flex items-center">
-                <Image
-                  src={testimonial.avatar || "/placeholder.svg"}
-                  alt={testimonial.name}
-                  width={12}
-                  height={12}
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <h4 className="font-semibold text-foreground">{testimonial.name}</h4>
-                  <p className="text-sm text-foreground/60">
-                    {testimonial.role} at {testimonial.company}
-                  </p>
+                {/* Quote icon */}
+                <div className="absolute top-6 right-6 opacity-20">
+                  <Quote className="w-8 h-8 text-accent" />
                 </div>
+
+                {/* Content */}
+                <div className="relative z-10">
+                  <p className="text-foreground/90 text-lg leading-relaxed mb-8 font-medium">
+                    &quot;{testimonial.content}&quot;
+                  </p>
+
+                  {/* Profile section */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center">
+                      <div className="relative">
+                        <Image
+                          src={testimonial.avatar || "/placeholder.svg"}
+                          alt={testimonial.name}
+                          width={56}
+                          height={56}
+                          className="w-14 h-14 rounded-2xl object-cover border-2 border-accent/20"
+                        />
+                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-accent rounded-full border-2 border-card"></div>
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="font-bold text-foreground text-lg">{testimonial.name}</h4>
+                        <p className="text-foreground/60 text-sm font-medium">
+                          {testimonial.role}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hover effect gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
               </div>
             </motion.div>
           ))}

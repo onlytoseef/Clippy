@@ -13,8 +13,6 @@ import Title from "@/components/Title"
 import { contactInfo } from "@/data/Contact"
 import { ContactFormData, contactSchema } from "@/validations/contact"
 
-
-
 export default function ContactPage() {
   const {
     register,

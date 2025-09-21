@@ -35,7 +35,7 @@ export function VoiceDemoCard() {
               key={category.id}
               size="sm"
               variant={active ? "destructive" : "outline"}
-              className="rounded-full hover:bg-accent/80 hover:border-none"
+              className="rounded-full hover:bg-accent/80 hover:text-white hover:border-none"
               onClick={() => setSelectedCategory(category.id)}
             >
               <Icon className="w-4 h-4" />

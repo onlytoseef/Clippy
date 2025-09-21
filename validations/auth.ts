@@ -18,7 +18,11 @@ export const signUpSchema = z
     password: z.string().min(6, "Password must be at least 6 characters"),
     rememberMe: z.boolean().optional()
   })
-  
+
+  export const codeSchema = z.object({
+    code: z.string().min(6, "Verification code must be at least 6 digits")
+})
 
 export type SignUpFormData = z.infer<typeof signUpSchema>
 export type LoginFormData = z.infer<typeof loginSchema>
+export type CodeFormData = z.infer<typeof codeSchema>

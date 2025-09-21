@@ -6,7 +6,7 @@ import { MessageCircle } from 'lucide-react'
 export const ContactSupport = () => {
     return (
         <motion.div
-            className="text-center mt-10 p-8 bg-card rounded-2xl border border-border"
+            className="text-center mt-10 p-8 bg-muted border border-border"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
