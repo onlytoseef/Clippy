@@ -1,7 +1,8 @@
 "use client"
 
+import React from "react"
 import { motion } from "framer-motion"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { 
   Image, 
@@ -18,299 +19,371 @@ import {
   Drama,
   Rainbow,
   Circle,
-  Lightbulb
+  Send,
+  ChevronDown,
+  Copy,
+  Expand,
+  Grid3X3
 } from "lucide-react"
 
 export function ImageGenerationPage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedImages, setGeneratedImages] = useState<string[]>([])
-  const [formData, setFormData] = useState({
-    prompt: "",
-    style: "realistic",
-    size: "1024x1024",
-    quality: "standard",
-    count: 1
-  })
+  const [prompt, setPrompt] = useState("")
+  const [selectedStyle, setSelectedStyle] = useState<string | null>(null)
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [selectedQuality, setSelectedQuality] = useState<string | null>(null)
+  const [showStyleDropdown, setShowStyleDropdown] = useState(false)
+  const [showSizeDropdown, setShowSizeDropdown] = useState(false)
+  const [showQualityDropdown, setShowQualityDropdown] = useState(false)
+  
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const styles = [
-    { id: "realistic", name: "Realistic", preview: Image },
-    { id: "artistic", name: "Artistic", preview: Brush },
-    { id: "cartoon", name: "Cartoon", preview: Drama },
-    { id: "abstract", name: "Abstract", preview: Rainbow },
-    { id: "minimalist", name: "Minimalist", preview: Circle },
-    { id: "vintage", name: "Vintage", preview: Camera }
+    { id: "realistic", name: "Realistic", icon: Image, desc: "Photorealistic images" },
+    { id: "artistic", name: "Artistic", icon: Brush, desc: "Creative artistic style" },
+    { id: "cartoon", name: "Cartoon", icon: Drama, desc: "Animated cartoon style" },
+    { id: "abstract", name: "Abstract", icon: Rainbow, desc: "Abstract art style" },
+    { id: "minimalist", name: "Minimalist", icon: Circle, desc: "Clean simple style" },
+    { id: "vintage", name: "Vintage", icon: Camera, desc: "Retro vintage look" }
   ]
 
   const sizes = [
-    { id: "1024x1024", name: "Square (1024×1024)", ratio: "1:1" },
-    { id: "1024x1792", name: "Portrait (1024×1792)", ratio: "9:16" },
-    { id: "1792x1024", name: "Landscape (1792×1024)", ratio: "16:9" }
+    { id: "square", name: "Square", desc: "1024×1024" },
+    { id: "portrait", name: "Portrait", desc: "1024×1792" },
+    { id: "landscape", name: "Landscape", desc: "1792×1024" }
   ]
 
+  const qualities = [
+    { id: "standard", name: "Standard", desc: "Fast generation" },
+    { id: "hd", name: "HD Quality", desc: "Higher detail" },
+    { id: "ultra", name: "Ultra HD", desc: "Best quality" }
+  ]
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
+    }
+  }, [prompt])
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowStyleDropdown(false)
+      setShowSizeDropdown(false)
+      setShowQualityDropdown(false)
+    }
+    
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
+
   const handleGenerate = async () => {
+    if (!prompt.trim()) return
+    
     setIsGenerating(true)
     // Simulate API call
     setTimeout(() => {
       // Generate placeholder images
-      const newImages = Array(formData.count).fill(null).map((_, i) => 
-        `https://picsum.photos/400/400?random=${Date.now() + i}`
+      const newImages = Array.from({ length: 4 }, (_, i) => 
+        `https://picsum.photos/512/512?random=${Date.now()}-${i}`
       )
       setGeneratedImages(newImages)
       setIsGenerating(false)
     }, 4000)
   }
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleGenerate()
+    }
+  }
+
+  const insertSelection = (type: 'style' | 'size' | 'quality', value: string) => {
+    if (type === 'style') {
+      setSelectedStyle(value)
+      setShowStyleDropdown(false)
+    } else if (type === 'size') {
+      setSelectedSize(value)
+      setShowSizeDropdown(false)
+    } else if (type === 'quality') {
+      setSelectedQuality(value)
+      setShowQualityDropdown(false)
+    }
+  }
+
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
-      {/* Header Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {[
-          { label: "Images Created", value: "8,432", icon: Image, color: "blue" },
-          { label: "Styles Available", value: "50+", icon: Palette, color: "purple" },
-          { label: "Generation Speed", value: "3.2s", icon: Zap, color: "yellow" },
-          { label: "User Rating", value: "4.9★", icon: Heart, color: "red" }
-        ].map((stat, index) => (
+    <div className="h-full flex flex-col p-6">
+      {/* Generated Images Display - Centered */}
+      <div className="flex-1 flex items-center justify-center">
+        {generatedImages.length > 0 ? (
           <motion.div
-            key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="bg-card border border-border rounded-xl p-6"
+            className="bg-card border border-border rounded-xl p-8 max-w-6xl w-full max-h-[70vh] overflow-y-auto"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-                <p className="text-2xl font-bold">{stat.value}</p>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500/20 rounded-lg">
+                  <Image className="w-6 h-6 text-green-400" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">Generated Images</h2>
+                  <p className="text-muted-foreground">{generatedImages.length} images ready</p>
+                </div>
               </div>
-              <div className={`p-3 rounded-lg bg-${stat.color}-500/20`}>
-                <stat.icon className={`w-6 h-6 text-${stat.color}-400`} />
+              
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download All
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Share className="w-4 h-4 mr-2" />
+                  Share
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {generatedImages.map((image, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="group relative bg-secondary/30 rounded-xl overflow-hidden border border-border"
+                >
+                  <img
+                    src={image}
+                    alt={`Generated image ${index + 1}`}
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="secondary">
+                        <Download className="w-4 h-4" />
+                      </Button>
+                      <Button size="sm" variant="secondary">
+                        <Expand className="w-4 h-4" />
+                      </Button>
+                      <Button size="sm" variant="secondary">
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        ) : isGenerating ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-card border border-border rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
+          >
+            <div className="text-center">
+              <RefreshCw className="w-12 h-12 text-purple-400 animate-spin mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Generating Images...</h3>
+              <p className="text-muted-foreground">
+                Creating {selectedStyle ? styles.find(s => s.id === selectedStyle)?.name.toLowerCase() : 'beautiful'} images for you
+              </p>
+              <div className="mt-4 w-64 bg-secondary rounded-full h-2 mx-auto">
+                <motion.div
+                  className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 4 }}
+                />
               </div>
             </div>
           </motion.div>
-        ))}
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Image Configuration */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="bg-card border border-border rounded-xl p-8"
-        >
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <Wand2 className="w-6 h-6 text-purple-400" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold">Image Generator</h2>
-              <p className="text-muted-foreground">Create stunning visuals with AI</p>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            {/* Prompt Input */}
-            <div className="space-y-3">
-              <label className="text-sm font-medium">Image Description</label>
-              <textarea
-                placeholder="Describe the image you want to create... Be detailed for better results!"
-                value={formData.prompt}
-                onChange={(e) => setFormData({...formData, prompt: e.target.value})}
-                className="w-full p-4 bg-secondary/50 border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                rows={4}
-              />
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                <Lightbulb className="w-3 h-3" />
-                Tip: Include details like colors, lighting, mood, and style for better results
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-card border border-border rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
+          >
+            <div className="text-center">
+              <div className="w-24 h-24 bg-secondary/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Image className="w-12 h-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-medium mb-2">Ready to Create</h3>
+              <p className="text-muted-foreground">
+                Describe your image and let AI bring it to life
               </p>
             </div>
+          </motion.div>
+        )}
+      </div>
 
-            {/* Style Selection */}
-            <div className="space-y-3">
-              <label className="text-sm font-medium">Art Style</label>
-              <div className="grid grid-cols-3 gap-3">
-                {styles.map((style) => (
+      {/* Input Field Section - Bottom */}
+      <div className="mt-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="bg-card border border-border rounded-xl p-6"
+        >
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-purple-500/20 rounded-lg">
+            <Wand2 className="w-6 h-6 text-purple-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold">Image Generator</h3>
+            <p className="text-sm text-muted-foreground">
+              Describe your image and select style options
+            </p>
+          </div>
+        </div>
+
+        {/* Feature Buttons */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {/* Style */}
+          <div className="relative">
+            <Button
+              variant={selectedStyle ? "default" : "outline"}
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowStyleDropdown(!showStyleDropdown)
+              }}
+              className="flex items-center gap-2"
+            >
+              {selectedStyle ? (
+                <>
+                  {React.createElement(styles.find(s => s.id === selectedStyle)?.icon || Brush, { className: "w-4 h-4" })}
+                  {styles.find(s => s.id === selectedStyle)?.name}
+                </>
+              ) : (
+                <>
+                  <Brush className="w-4 h-4" />
+                  Style
+                </>
+              )}
+              <ChevronDown className="w-3 h-3" />
+            </Button>
+            
+            {showStyleDropdown && (
+              <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-10 min-w-48">
+                {styles.map((style) => {
+                  const Icon = style.icon
+                  return (
+                    <button
+                      key={style.id}
+                      onClick={() => insertSelection('style', style.id)}
+                      className="w-full px-3 py-2 text-left hover:bg-secondary flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg"
+                    >
+                      <Icon className="w-4 h-4" />
+                      <div>
+                        <div className="font-medium">{style.name}</div>
+                        <div className="text-xs text-muted-foreground">{style.desc}</div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Size */}
+          <div className="relative">
+            <Button
+              variant={selectedSize ? "default" : "outline"}
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowSizeDropdown(!showSizeDropdown)
+              }}
+              className="flex items-center gap-2"
+            >
+              <Grid3X3 className="w-4 h-4" />
+              {selectedSize ? sizes.find(s => s.id === selectedSize)?.name : "Size"}
+              <ChevronDown className="w-3 h-3" />
+            </Button>
+            
+            {showSizeDropdown && (
+              <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-10">
+                {sizes.map((size) => (
                   <button
-                    key={style.id}
-                    onClick={() => setFormData({...formData, style: style.id})}
-                    className={`p-4 rounded-xl border transition-all text-center ${
-                      formData.style === style.id
-                        ? 'border-purple-500 bg-purple-500/10'
-                        : 'border-border bg-secondary/30 hover:bg-secondary/50'
-                    }`}
+                    key={size.id}
+                    onClick={() => insertSelection('size', size.id)}
+                    className="w-full px-3 py-2 text-left hover:bg-secondary first:rounded-t-lg last:rounded-b-lg"
                   >
-                    <div className="flex flex-col items-center">
-                      <style.preview className="w-8 h-8 text-muted-foreground mb-2" />
-                      <div className="font-medium text-sm text-center">{style.name}</div>
-                    </div>
+                    <div className="font-medium">{size.name}</div>
+                    <div className="text-xs text-muted-foreground">{size.desc}</div>
                   </button>
                 ))}
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* Size & Quality */}
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-3">
-                <label className="text-sm font-medium">Image Size</label>
-                <div className="grid grid-cols-1 gap-2">
-                  {sizes.map((size) => (
-                    <button
-                      key={size.id}
-                      onClick={() => setFormData({...formData, size: size.id})}
-                      className={`p-3 rounded-lg border transition-all text-left ${
-                        formData.size === size.id
-                          ? 'border-purple-500 bg-purple-500/10'
-                          : 'border-border bg-secondary/30 hover:bg-secondary/50'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">{size.name}</span>
-                        <span className="text-sm text-muted-foreground">{size.ratio}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Advanced Options */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <label className="text-sm font-medium">Quality</label>
-                <select
-                  value={formData.quality}
-                  onChange={(e) => setFormData({...formData, quality: e.target.value})}
-                  className="w-full p-3 bg-secondary/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                >
-                  <option value="standard">Standard</option>
-                  <option value="hd">HD Quality</option>
-                </select>
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-sm font-medium">Number of Images</label>
-                <select
-                  value={formData.count}
-                  onChange={(e) => setFormData({...formData, count: parseInt(e.target.value)})}
-                  className="w-full p-3 bg-secondary/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                >
-                  <option value={1}>1 Image</option>
-                  <option value={2}>2 Images</option>
-                  <option value={4}>4 Images</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Generate Button */}
+          {/* Quality */}
+          <div className="relative">
             <Button
-              onClick={handleGenerate}
-              disabled={!formData.prompt || isGenerating}
-              className="w-full"
-              size="lg"
-              variant="destructive"
+              variant={selectedQuality ? "default" : "outline"}
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowQualityDropdown(!showQualityDropdown)
+              }}
+              className="flex items-center gap-2"
             >
-              {isGenerating ? (
-                <div className="flex items-center gap-3">
-                  <RefreshCw className="w-5 h-5 animate-spin" />
-                  Creating Your Image...
-                </div>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <Sparkles className="w-5 h-5" />
-                  Generate Images
-                </div>
-              )}
+              <Zap className="w-4 h-4" />
+              {selectedQuality ? qualities.find(q => q.id === selectedQuality)?.name : "Quality"}
+              <ChevronDown className="w-3 h-3" />
             </Button>
-          </div>
-        </motion.div>
-
-        {/* Generated Images */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-card border border-border rounded-xl p-8"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-500/20 rounded-lg">
-                <Image className="w-6 h-6 text-green-400" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold">Generated Images</h2>
-                <p className="text-muted-foreground">Your AI-created artwork</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            {generatedImages.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4">
-                {generatedImages.map((image, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="relative group"
+            
+            {showQualityDropdown && (
+              <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-10">
+                {qualities.map((quality) => (
+                  <button
+                    key={quality.id}
+                    onClick={() => insertSelection('quality', quality.id)}
+                    className="w-full px-3 py-2 text-left hover:bg-secondary first:rounded-t-lg last:rounded-b-lg"
                   >
-                    <div className="aspect-square bg-secondary/30 rounded-xl overflow-hidden border border-border">
-                      <img 
-                        src={image} 
-                        alt={`Generated image ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    
-                    {/* Image Actions */}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
-                      <Button size="sm" variant="secondary">
-                        <Download className="w-4 h-4 mr-2" />
-                        Download
-                      </Button>
-                      <Button size="sm" variant="secondary">
-                        <Share className="w-4 h-4 mr-2" />
-                        Share
-                      </Button>
-                    </div>
-                  </motion.div>
+                    <div className="font-medium">{quality.name}</div>
+                    <div className="text-xs text-muted-foreground">{quality.desc}</div>
+                  </button>
                 ))}
               </div>
-            ) : (
-              <div className="h-96 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-24 h-24 bg-secondary/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Image className="w-12 h-12 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-lg font-medium mb-2">No Images Generated Yet</h3>
-                  <p className="text-muted-foreground">
-                    Describe what you want to create and let AI do the magic
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Generation Progress */}
-            {isGenerating && (
-              <div className="bg-secondary/30 rounded-xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <RefreshCw className="w-5 h-5 animate-spin text-purple-400" />
-                  <span className="font-medium">Creating your masterpiece...</span>
-                </div>
-                <div className="w-full bg-secondary rounded-full h-2">
-                  <motion.div
-                    className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 4 }}
-                  />
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  This usually takes 3-5 seconds...
-                </p>
-              </div>
             )}
           </div>
+        </div>
+
+        {/* Input Field */}
+        <div className="relative">
+          <textarea
+            ref={textareaRef}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Describe your image... (e.g., 'A majestic mountain landscape at sunset with golden light')"
+            className="w-full p-4 pr-12 bg-secondary/50 border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/50 min-h-[60px] max-h-[200px]"
+            style={{ overflow: 'hidden' }}
+          />
+          
+          <Button
+            onClick={handleGenerate}
+            disabled={!prompt.trim() || isGenerating}
+            size="sm"
+            className="absolute right-2 bottom-2"
+          >
+            {isGenerating ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
+
+        <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
+          <span>Press Enter to generate or Shift+Enter for new line</span>
+          <span>{prompt.length}/1000 characters</span>
+        </div>
         </motion.div>
       </div>
     </div>
