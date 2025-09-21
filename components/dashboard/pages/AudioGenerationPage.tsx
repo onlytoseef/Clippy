@@ -388,7 +388,7 @@ export function AudioGenerationPage() {
                   />
                 </div>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Processing with {voices.find(v => v.id === formData.voice)?.name}'s voice...
+                  Processing with {voices.find(v => v.id === formData.voice)?.name}&apos;s voice...
                 </p>
               </div>
             )}
