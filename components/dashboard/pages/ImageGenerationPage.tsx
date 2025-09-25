@@ -145,9 +145,10 @@ export function ImageGenerationPage() {
       setGeneratedImages(data.images)
       setTokensUsed(prev => prev + data.tokensUsed)
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Generation failed:', error)
-      alert(`Failed to generate images: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+      alert(`Failed to generate images: ${errorMessage}`)
     } finally {
       setIsGenerating(false)
     }

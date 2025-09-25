@@ -89,13 +89,15 @@ export async function POST(request: NextRequest) {
       generatedAt: new Date().toISOString()
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Image generation error:', error)
+    
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
     
     return NextResponse.json(
       { 
         error: "Failed to generate images",
-        details: error.message 
+        details: errorMessage 
       },
       { status: 500 }
     )
