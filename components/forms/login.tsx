@@ -10,23 +10,27 @@ import { Input } from "../ui/input"
 import Header from "../auth/header"
 import Title from "../auth/Title"
 import { Button } from "../ui/button"
+import { useLogin } from "@/hooks/useAuth"
 
 export default function LoginForm() {
+    const { mutate, isPending } = useLogin()
+
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: { errors },
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",
             password: "",
-            rememberMe: false
-        }
+            rememberMe: false,
+            user_type: "user",
+        },
     })
 
-    const onSubmit = (data: LoginFormData) => {
-        console.log("Form submitted:", data)
+    const onSubmit = async (data: LoginFormData) => {
+        mutate(data);
     }
 
     return (
@@ -51,6 +55,7 @@ export default function LoginForm() {
                                 title="Welcome back"
                                 subTitle="Sign in to your account"
                             />
+
                             <Input
                                 id="email"
                                 type="email"
@@ -68,7 +73,6 @@ export default function LoginForm() {
                                 {...register("password")}
                                 error={errors.password?.message}
                             />
-
 
                             {/* Remember me */}
                             <div className="flex items-center justify-between">
@@ -97,11 +101,13 @@ export default function LoginForm() {
                             {/* Submit */}
                             <div className="pt-2">
                                 <Button
+                                    type="submit"
                                     variant="default"
                                     size="xl"
                                     className="w-full rounded-full"
+                                    disabled={isPending}
                                 >
-                                    Sign in
+                                    {isPending ? "Signing in..." : "Sign in"}
                                 </Button>
                             </div>
 
@@ -123,8 +129,8 @@ export default function LoginForm() {
                             <div>
                                 <button
                                     type="button"
-                                    onClick={() => signIn("google")} // <-- Added NextAuth Google SignIn
-                                    className="w-full inline-flex justify-center items-center py-3 px-4 border border-border rounded-lg shadow-sm bg-card text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-colors"
+                                    onClick={() => signIn("google")}
+                                    className="w-full inline-flex justify-center items-center py-3 px-4 border border-border rounded-full shadow-sm bg-card text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-colors"
                                 >
                                     <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                                         <path
@@ -149,9 +155,7 @@ export default function LoginForm() {
                             </div>
 
                             {/* Sign Up */}
-                            <Footer
-                                type="login"
-                            />
+                            <Footer type="login" />
                         </form>
                     </div>
                 </div>

@@ -12,12 +12,17 @@ import Header from "../auth/header"
 import { Button } from "../ui/button"
 import { FcGoogle } from "react-icons/fc"
 import Title from "../auth/Title"
+import { useSignup } from "@/hooks/useAuth"
 
 export default function SignUpForm() {
     const [step, setStep] = useState(0);
+
+    const { mutate: signUp, isPending } = useSignup();
+
     const {
         register,
         handleSubmit,
+        trigger,
         formState: { errors },
     } = useForm<SignUpFormData>({
         resolver: zodResolver(signUpSchema),
@@ -27,15 +32,26 @@ export default function SignUpForm() {
             email: "",
             password: "",
             confirmPassword: "",
+            user_type: "user",
         },
-    })
+        mode: "onSubmit",
+    });
 
     const onSubmit = (data: SignUpFormData) => {
-        console.log("Form Submitted ✅", data)
-    }
+        signUp(data);
+    };
 
-    const nextStep = () => setStep((prev) => prev + 1)
-    const prevStep = () => setStep((prev) => prev - 1)
+    // validate only fields of current step
+    const nextStep = async () => {
+        let stepFields: (keyof SignUpFormData)[] = [];
+        if (step === 1) stepFields = ["firstName", "lastName", "email"];
+        if (step === 2) stepFields = ["password", "confirmPassword"];
+
+        const isValid = await trigger(stepFields);
+        if (isValid) setStep((prev) => prev + 1);
+    };
+
+    const prevStep = () => setStep((prev) => prev - 1);
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-hero">
@@ -56,6 +72,8 @@ export default function SignUpForm() {
                         {/* Right side */}
                         <div className="w-full md:w-3/5 p-5 md:p-8 flex flex-col justify-center">
                             <AnimatePresence mode="wait">
+
+                                {/* Step 0 - Choose Signup */}
                                 {step === 0 && (
                                     <motion.div
                                         key="step0"
@@ -71,7 +89,7 @@ export default function SignUpForm() {
                                         />
                                         <div className="space-y-4">
                                             <Button
-                                                onClick={nextStep}
+                                                onClick={() => setStep(1)}
                                                 variant="outline"
                                                 size="xl"
                                                 className="w-full rounded-full"
@@ -88,19 +106,23 @@ export default function SignUpForm() {
                                                 Sign up with Google
                                             </Button>
                                         </div>
-                                        <Footer
-                                            type="signup"
-                                        />
+                                        <Footer type="signup" />
                                     </motion.div>
                                 )}
 
-                                {/* Step 1 - Your Details */}
+                                {/* Step 1 - Personal Info */}
                                 {step === 1 && (
-                                    <motion.div key="step1" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.3 }} className="space-y-6">
+                                    <motion.div
+                                        key="step1"
+                                        initial={{ opacity: 0, x: 50 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -50 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="space-y-6"
+                                    >
                                         <div className="space-y-4">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <Input
-                                                    id="text"
                                                     type="text"
                                                     label="First Name"
                                                     placeholder="First Name"
@@ -108,7 +130,6 @@ export default function SignUpForm() {
                                                     error={errors.firstName?.message}
                                                 />
                                                 <Input
-                                                    id="text"
                                                     type="text"
                                                     label="Last Name"
                                                     placeholder="Last Name"
@@ -116,28 +137,26 @@ export default function SignUpForm() {
                                                     error={errors.lastName?.message}
                                                 />
                                             </div>
-
                                             <Input
-                                                id="email"
                                                 type="email"
                                                 label="Email"
                                                 placeholder="Enter your email"
                                                 {...register("email")}
                                                 error={errors.email?.message}
                                             />
-
                                         </div>
 
                                         <div className="flex justify-between pt-2">
                                             <Button
                                                 onClick={prevStep}
                                                 variant="outline"
-                                                size="lg"                                           >
+                                                size="lg"
+                                            >
                                                 <ArrowLeft className="h-4 w-4 mr-2 inline" />
                                                 Back
                                             </Button>
-
                                             <Button
+                                                type="button"
                                                 onClick={nextStep}
                                                 variant="default"
                                                 size="lg"
@@ -147,27 +166,29 @@ export default function SignUpForm() {
                                                 <ArrowRight className="h-4 w-4 ml-2 inline" />
                                             </Button>
                                         </div>
-                                        <Footer
-                                            type="signup"
-                                        />
+                                        <Footer type="signup" />
                                     </motion.div>
                                 )}
 
                                 {/* Step 2 - Password */}
                                 {step === 2 && (
-                                    <motion.div key="step2" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.3 }} className="space-y-6">
+                                    <motion.div
+                                        key="step2"
+                                        initial={{ opacity: 0, x: 50 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -50 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="space-y-6"
+                                    >
                                         <div className="space-y-4">
                                             <Input
-                                                id="password"
                                                 type="password"
                                                 label="Password"
                                                 placeholder="Enter your password"
                                                 {...register("password")}
                                                 error={errors.password?.message}
                                             />
-
                                             <Input
-                                                id="password"
                                                 type="password"
                                                 label="Confirm Password"
                                                 placeholder="Confirm password"
@@ -180,20 +201,21 @@ export default function SignUpForm() {
                                             <Button
                                                 onClick={prevStep}
                                                 variant="outline"
-                                                size="lg"                                           >
+                                                size="lg"
+                                            >
                                                 <ArrowLeft className="h-4 w-4 mr-2 inline" />
                                                 Back
                                             </Button>
                                             <Button
+                                                type="submit"
                                                 variant="default"
                                                 size="lg"
+                                                disabled={isPending}
                                             >
-                                                Create Account
+                                                {isPending ? "Creating..." : "Create Account"}
                                             </Button>
                                         </div>
-                                        <Footer
-                                            type="signup"
-                                        />
+                                        <Footer type="signup" />
                                     </motion.div>
                                 )}
                             </AnimatePresence>

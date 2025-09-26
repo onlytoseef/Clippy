@@ -7,6 +7,7 @@ export const signUpSchema = z
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
+    user_type: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -16,7 +17,8 @@ export const signUpSchema = z
  export const loginSchema = z.object({
     email: z.string().email("Enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
-    rememberMe: z.boolean().optional()
+    rememberMe: z.boolean().optional(),
+    user_type: z.string(),
   })
 
   export const codeSchema = z.object({
