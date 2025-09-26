@@ -15,8 +15,7 @@ export function Navbar() {
     { label: "About", href: "/about" },
     { label: "Pricing", href: "/pricing" },
     { label: "Contact", href: "/contact" },
-    { label: "Products", href: "/products", dropdown: true },
-    { label: "Integrations", href: "/integrations", dropdown: true },
+   
   ]
 
   return (
@@ -32,14 +31,14 @@ export function Navbar() {
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map(({ label, href, dropdown }) => (
+            {navLinks.map(({ label, href,  }) => (
               <Link
                 key={label}
                 href={href}
                 className="flex items-center space-x-1 text-foreground hover:text-primary cursor-pointer transition-colors"
               >
                 <span>{label}</span>
-                {dropdown && <ChevronDown className="w-4 h-4" />}
+               
               </Link>
             ))}
           </div>
@@ -80,7 +79,7 @@ export function Navbar() {
             className="md:hidden bg-background/95 backdrop-blur-md border-t border-border px-4 pt-4 pb-6 space-y-4"
           >
             <div className="flex flex-col space-y-4">
-              {navLinks.map(({ label, href, dropdown }) => (
+              {navLinks.map(({ label, href }) => (
                 <Link
                   key={label}
                   href={href}
@@ -88,7 +87,6 @@ export function Navbar() {
                   onClick={() => setMobileOpen(false)}
                 >
                   <span>{label}</span>
-                  {dropdown && <ChevronDown className="w-4 h-4" />}
                 </Link>
               ))}
             </div>
