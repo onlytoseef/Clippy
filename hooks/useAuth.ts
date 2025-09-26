@@ -38,7 +38,7 @@ export const useLogin = () => {
 };
 
 export const useSignup = () => {
-    const router = useRouter()
+    const router = useRouter();
 
     return useMutation({
         mutationFn: signup,

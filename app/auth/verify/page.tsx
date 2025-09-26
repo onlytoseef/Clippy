@@ -1,9 +1,12 @@
 import React from 'react'
 import VerificationForm from '@/components/forms/verification'
+import { Suspense } from 'react'
 
 const VerificationPage = () => {
     return (
-        <VerificationForm />
+        <Suspense fallback={<div>Loading...</div>}>
+            <VerificationForm />
+        </Suspense>
     )
 }
 
