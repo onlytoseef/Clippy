@@ -21,7 +21,7 @@ export const plans = [
     popular: false,
   },
   {
-    name: "Creator",
+    name: "Basic",
     price: 19,
     period: "month",
     yearlyPrice: 190,
@@ -43,7 +43,7 @@ export const plans = [
     popular: true,
   },
   {
-    name: "Business",
+    name: "Standard",
     price: 49,
     period: "month",
     yearlyPrice: 490,
@@ -67,7 +67,7 @@ export const plans = [
     popular: false,
   },
   {
-    name: "Enterprise",
+    name: "Premium",
     price: null,
     period: "custom",
     yearlyPrice: null,

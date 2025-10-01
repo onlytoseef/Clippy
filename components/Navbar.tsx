@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ChevronDown, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Logo from "./Logo"
 import Link from "next/link"
@@ -45,9 +45,6 @@ export function Navbar() {
 
           {/* Desktop actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost" className="text-foreground hover:bg-primary hover:text-white">
-              Contact Sales
-            </Button>
             <Link href="/auth/login">
               <Button
                 variant="default"
@@ -92,9 +89,6 @@ export function Navbar() {
             </div>
 
             <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-              <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
-                Contact Sales
-              </Button>
               <Link href="/auth/login">
                 <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
                   Login
