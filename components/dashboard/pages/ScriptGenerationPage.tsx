@@ -140,9 +140,10 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
   }
 
   return (
-    <div className="h-full flex flex-col p-6">
-      {/* Generated Script Display - Centered */}
-      <div className="flex-1 flex items-center justify-center">
+    <div className="h-full p-4 sm:p-6">
+      <div className="h-full flex flex-col">
+        {/* Generated Script Display - Centered */}
+        <div className="flex-1 flex items-center justify-center">
         {generatedScript ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -212,24 +213,14 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
       </div>
 
       {/* Input Field Section - Bottom */}
-      <div className="mt-6">
+      <div className="mt-6 flex justify-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-card border border-border rounded-xl p-6"
+          className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-2xl shadow-xl p-4 transition-all duration-200 max-w-3xl w-full"
         >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-purple-500/20 rounded-lg">
-            <Wand2 className="w-6 h-6 text-purple-400" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold">Script Generator</h3>
-            <p className="text-sm text-muted-foreground">
-              Enter your topic and select options to generate your script
-            </p>
-          </div>
-        </div>
+
 
         {/* Feature Buttons */}
         <div className="flex flex-wrap gap-2 mb-4">
@@ -242,7 +233,7 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
                 e.stopPropagation()
                 setShowTypeDropdown(!showTypeDropdown)
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-orange-500/20 dark:bg-orange-600/20 backdrop-blur-xl border border-orange-300/30 dark:border-orange-400/30 hover:bg-orange-500/30 dark:hover:bg-orange-600/30 text-orange-900 dark:text-orange-100"
             >
               {selectedType ? (
                 <>
@@ -259,14 +250,14 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
             </Button>
             
             {showTypeDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-10 min-w-48">
+              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50 min-w-48">
                 {scriptTypes.map((type) => {
                   const Icon = type.icon
                   return (
                     <button
                       key={type.id}
                       onClick={() => insertSelection('type', type.id)}
-                      className="w-full px-3 py-2 text-left hover:bg-secondary flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg"
+                      className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
                     >
                       <Icon className="w-4 h-4" />
                       <div>
@@ -289,19 +280,19 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
                 e.stopPropagation()
                 setShowToneDropdown(!showToneDropdown)
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-orange-500/20 dark:bg-orange-600/20 backdrop-blur-xl border border-orange-300/30 dark:border-orange-400/30 hover:bg-orange-500/30 dark:hover:bg-orange-600/30 text-orange-900 dark:text-orange-100"
             >
               {selectedTone ? tones.find(t => t.id === selectedTone)?.name : "Tone"}
               <ChevronDown className="w-3 h-3" />
             </Button>
             
             {showToneDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-10">
+              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {tones.map((tone) => (
                   <button
                     key={tone.id}
                     onClick={() => insertSelection('tone', tone.id)}
-                    className="w-full px-3 py-2 text-left hover:bg-secondary first:rounded-t-lg last:rounded-b-lg"
+                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
                   >
                     {tone.name}
                   </button>
@@ -319,7 +310,7 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
                 e.stopPropagation()
                 setShowDurationDropdown(!showDurationDropdown)
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-orange-500/20 dark:bg-orange-600/20 backdrop-blur-xl border border-orange-300/30 dark:border-orange-400/30 hover:bg-orange-500/30 dark:hover:bg-orange-600/30 text-orange-900 dark:text-orange-100"
             >
               <Clock className="w-4 h-4" />
               {selectedDuration ? durations.find(d => d.id === selectedDuration)?.name : "Duration"}
@@ -327,12 +318,12 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
             </Button>
             
             {showDurationDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-10">
+              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {durations.map((duration) => (
                   <button
                     key={duration.id}
                     onClick={() => insertSelection('duration', duration.id)}
-                    className="w-full px-3 py-2 text-left hover:bg-secondary first:rounded-t-lg last:rounded-b-lg"
+                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
                   >
                     {duration.name}
                   </button>
@@ -343,14 +334,17 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
         </div>
 
         {/* Input Field */}
-        <div className="relative">
+        <div className="relative bg-transparent border border-white/10 dark:border-gray-700/10 rounded-2xl p-3 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20">
+          <div className="absolute top-3 left-3 z-10">
+            <Wand2 className="w-5 h-5 text-orange-400" />
+          </div>
           <textarea
             ref={textareaRef}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Describe your script topic... (e.g., 'How to start a successful YouTube channel')"
-            className="w-full p-4 pr-12 bg-secondary/50 border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/50 min-h-[60px] max-h-[200px]"
+            placeholder="Describe your script topic..."
+            className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[60px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             style={{ overflow: 'hidden' }}
           />
           
@@ -373,6 +367,7 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
           <span>{prompt.length}/2000 characters</span>
         </div>
         </motion.div>
+        </div>
       </div>
     </div>
   )
