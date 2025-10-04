@@ -4,10 +4,10 @@ import { join } from 'path';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ filename: string }> }
+  context: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const { filename } = await params;
+    const { filename } = await context.params;
     const filePath = join(process.cwd(), 'public', 'generated-audio', filename);
     
     console.log('Serving audio file:', filePath);
