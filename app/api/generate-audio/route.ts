@@ -6,15 +6,16 @@ import { join } from 'path';
 export async function POST(request: NextRequest) {
   try {
     const { 
-      voiceName = 'Zephyr',
-      speakingStyle = 'A deep, measured Urdu voice with precise diction, classical intonation, poetic rhythm, and theatrical pauses full of gravitas.',
-      content
+      text,
+      voice = 'Zephyr',
+      emotion = 'Urdu Poetry',
+      speed = 0.9
     } = await request.json();
 
     // Validation
-    if (!content || content.trim() === '') {
+    if (!text || text.trim() === '') {
       return NextResponse.json(
-        { error: "Content is required" },
+        { error: "Text is required" },
         { status: 400 }
       );
     }
@@ -25,12 +26,13 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('Generating audio with Google AI TTS...');
-    console.log('Voice Name:', voiceName);
-    console.log('Speaking Style:', speakingStyle);
-    console.log('Content:', content);
+    console.log('Voice:', voice);
+    console.log('Emotion:', emotion);
+    console.log('Speed:', speed);
+    console.log('Text:', text);
 
-    // Combine speaking style with content
-    const fullText = `${speakingStyle}: ${content}`;
+    // Use the text directly
+    const fullText = text;
 
     // Generate audio using Google GenAI TTS
     const response = await ai.models.generateContent({
@@ -40,7 +42,7 @@ export async function POST(request: NextRequest) {
         responseModalities: ['AUDIO'],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: voiceName },
+            prebuiltVoiceConfig: { voiceName: voice },
           },
         },
       },
@@ -110,16 +112,14 @@ export async function POST(request: NextRequest) {
     console.log(`Successfully created WAV file: ${fileName}`);
     console.log(`File size: ${wavBuffer.length} bytes`);
 
-    return NextResponse.json({
-      success: true,
-      fileName: fileName,
-      audioUrl: `/generated-audio/${fileName}`,
-      voiceName: voiceName,
-      speakingStyle: speakingStyle,
-      content: content,
-      fullText: fullText,
-      fileSize: wavBuffer.length,
-      generatedAt: new Date().toISOString()
+    // Return the audio file as blob response
+    return new NextResponse(wavBuffer, {
+      status: 200,
+      headers: {
+        'Content-Type': 'audio/wav',
+        'Content-Length': wavBuffer.length.toString(),
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+      },
     });
 
   } catch (error: unknown) {
