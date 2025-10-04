@@ -276,46 +276,28 @@ export function ImageGenerationPage() {
   }
 
   return (
-    <div className="h-full flex flex-col p-6">
+    <div className="h-full relative">
       {/* Generated Images Display - Centered */}
-      <div className="flex-1 flex items-center justify-center">
+      <div className="h-full flex items-center justify-center p-4 pb-32">
         {generatedImages.length > 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-card border border-border rounded-xl p-8 max-w-6xl w-full max-h-[70vh] overflow-y-auto"
+            className="bg-transparent border-0 rounded-xl p-8 w-full max-h-[70vh] overflow-y-auto flex justify-center"
           >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <Image className="w-6 h-6 text-green-400" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold">Generated Images</h2>
-                  <p className="text-muted-foreground">{generatedImages.length} images ready</p>
-                </div>
-              </div>
-              
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download All
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Share className="w-4 h-4 mr-2" />
-                  Share
-                </Button>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
               {generatedImages.map((image, index) => (
                 <motion.div
                   key={image.id}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="group relative bg-secondary/30 rounded-xl overflow-hidden border border-border"
+                  className="group relative bg-secondary/30 rounded-xl overflow-hidden"
+                  style={{
+                    boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px'
+                  }}
                 >
                   <img
                     src={image.dataUrl}
@@ -408,27 +390,17 @@ export function ImageGenerationPage() {
       </div>
 
       {/* Input Field Section - Bottom */}
-      <div className="mt-6">
+      <div className="flex-shrink-0 mt-40 p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-card border border-border rounded-xl p-6"
+          className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-2xl shadow-xl p-4 transition-all duration-200 max-w-3xl w-full mx-auto"
         >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-purple-500/20 rounded-lg">
-            <Wand2 className="w-6 h-6 text-purple-400" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold">Image Generator</h3>
-            <p className="text-sm text-muted-foreground">
-              Describe your image and select style options
-            </p>
-          </div>
-        </div>
+
 
         {/* Feature Buttons */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mt-2">
           {/* Style */}
           <div className="relative" data-dropdown>
             <Button
@@ -439,7 +411,7 @@ export function ImageGenerationPage() {
                 e.stopPropagation()
                 setShowStyleDropdown(prev => !prev)
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
             >
               {selectedStyle ? (
                 <>
@@ -456,7 +428,7 @@ export function ImageGenerationPage() {
             </Button>
             
             {showStyleDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 min-w-48">
+              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50 min-w-48">
                 {styles.map((style) => {
                   const Icon = style.icon
                   return (
@@ -491,7 +463,7 @@ export function ImageGenerationPage() {
                 e.stopPropagation()
                 setShowSizeDropdown(prev => !prev)
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
             >
               <Zap className="w-4 h-4" />
               {imageSizes.find(s => s.id === selectedSize)?.name || "1K Quality"}
@@ -499,7 +471,7 @@ export function ImageGenerationPage() {
             </Button>
             
             {showSizeDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50">
+              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {imageSizes.map((size) => (
                   <button
                     key={size.id}
@@ -508,7 +480,7 @@ export function ImageGenerationPage() {
                       e.stopPropagation()
                       insertSelection('size', size.id)
                     }}
-                    className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
                   >
                     <div className="font-medium">{size.name}</div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">{size.desc}</div>
@@ -528,7 +500,7 @@ export function ImageGenerationPage() {
                 e.stopPropagation()
                 setShowAspectRatioDropdown(prev => !prev)
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
             >
               <Grid3X3 className="w-4 h-4" />
               {aspectRatios.find(a => a.id === selectedAspectRatio)?.name || "Square"}
@@ -536,7 +508,7 @@ export function ImageGenerationPage() {
             </Button>
             
             {showAspectRatioDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50">
+              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {aspectRatios.map((ratio) => (
                   <button
                     key={ratio.id}
@@ -545,7 +517,7 @@ export function ImageGenerationPage() {
                       e.stopPropagation()
                       insertSelection('aspectRatio', ratio.id)
                     }}
-                    className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
                   >
                     <div className="font-medium">{ratio.name}</div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">{ratio.desc}</div>
@@ -565,7 +537,7 @@ export function ImageGenerationPage() {
                 e.stopPropagation()
                 setShowQualityDropdown(prev => !prev)
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
             >
               <Zap className="w-4 h-4" />
               {selectedQuality ? qualities.find(q => q.id === selectedQuality)?.name : "Quality"}
@@ -573,7 +545,7 @@ export function ImageGenerationPage() {
             </Button>
             
             {showQualityDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50">
+              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {qualities.map((quality) => (
                   <button
                     key={quality.id}
@@ -582,7 +554,7 @@ export function ImageGenerationPage() {
                       e.stopPropagation()
                       insertSelection('quality', quality.id)
                     }}
-                    className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
                   >
                     <div className="font-medium">{quality.name}</div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">{quality.desc}</div>
@@ -602,7 +574,7 @@ export function ImageGenerationPage() {
                 e.stopPropagation()
                 setShowNumberDropdown(prev => !prev)
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
             >
               <Grid3X3 className="w-4 h-4" />
               {numberOfImages} Image{numberOfImages > 1 ? 's' : ''}
@@ -610,7 +582,7 @@ export function ImageGenerationPage() {
             </Button>
             
             {showNumberDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50">
+              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {[1, 2, 3, 4].map((count) => (
                   <button
                     key={count}
@@ -619,7 +591,7 @@ export function ImageGenerationPage() {
                       e.stopPropagation()
                       selectNumberOfImages(count)
                     }}
-                    className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
                   >
                     <div className="font-medium">{count} Image{count > 1 ? 's' : ''}</div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">
@@ -643,14 +615,17 @@ export function ImageGenerationPage() {
         )}
 
         {/* Input Field */}
-        <div className="relative">
+        <div className="relative bg-transparent border mt-5 border-white/10 dark:border-gray-700/10 rounded-2xl p-3 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20">
+          <div className="absolute top-3 left-3 z-10">
+            <Wand2 className="w-5 h-5 text-orange-400" />
+          </div>
           <textarea
             ref={textareaRef}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Describe your image... (e.g., 'A majestic mountain landscape at sunset with golden light')"
-            className="w-full p-4 pr-12 bg-secondary/50 border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/50 min-h-[60px] max-h-[200px]"
+            placeholder="Describe your image..."
+            className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[60px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             style={{ overflow: 'hidden' }}
           />
           

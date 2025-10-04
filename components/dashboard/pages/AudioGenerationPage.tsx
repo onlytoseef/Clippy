@@ -15,61 +15,59 @@ import {
   Music,
   Mic,
   Headphones,
-  Clock,
   User,
   Flag,
   Smile,
-  Zap,
-  Heart,
-  MessageCircle,
-  Frown,
-  Meh,
-  Lightbulb,
-  Send,
   ChevronDown,
-  Copy,
-  Share
+  Send,
+  Lightbulb,
+  RotateCcw,
+  Clock,
+  Activity
 } from "lucide-react"
 
+type GeneratedAudio = {
+  url: string
+  filename: string
+  duration?: number
+}
+
 export function AudioGenerationPage() {
+  const [prompt, setPrompt] = useState("")
+  const [selectedVoice, setSelectedVoice] = useState("Zephyr")
+  const [selectedEmotion, setSelectedEmotion] = useState("Urdu Poetry")
+  const [selectedSpeed, setSelectedSpeed] = useState("0.9")
+  const [generatedAudio, setGeneratedAudio] = useState<GeneratedAudio | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [generatedAudio, setGeneratedAudio] = useState<string | null>(null)
-  const [prompt, setPrompt] = useState("")
-  const [selectedVoice, setSelectedVoice] = useState<string | null>(null)
-  const [selectedSpeed, setSelectedSpeed] = useState<string | null>(null)
-  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null)
-  const [showVoiceDropdown, setShowVoiceDropdown] = useState(false)
-  const [showSpeedDropdown, setShowSpeedDropdown] = useState(false)
-  const [showEmotionDropdown, setShowEmotionDropdown] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [showWaveform, setShowWaveform] = useState(true)
   
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
 
   const voices = [
-    { id: "oliver", name: "Oliver", accent: "Canadian", gender: "Male", icon: User },
-    { id: "emma", name: "Emma", accent: "Australian", gender: "Female", icon: User },
-    { id: "marcus", name: "Marcus", accent: "British", gender: "Male", icon: User },
-    { id: "sophia", name: "Sophia", accent: "American", gender: "Female", icon: User },
-    { id: "liam", name: "Liam", accent: "Irish", gender: "Male", icon: User },
-    { id: "ava", name: "Ava", accent: "Indian", gender: "Female", icon: User }
-  ]
-
-  const speeds = [
-    { id: "0.5", name: "0.5x (Slow)" },
-    { id: "0.75", name: "0.75x" },
-    { id: "1", name: "1x (Normal)" },
-    { id: "1.25", name: "1.25x" },
-    { id: "1.5", name: "1.5x (Fast)" },
-    { id: "2", name: "2x (Very Fast)" }
+    { id: "Zephyr", name: "Ali Usman" },
+    { id: "Rasalgethi", name: "Toseef" },
+    { id: "Gacrux", name: "Taliya" },
+    { id: "Fenrir", name: "Umar" },
+    { id: "Informative", name: "Faisal Warraich" }
   ]
 
   const emotions = [
-    { id: "neutral", name: "Neutral", icon: Meh, desc: "Natural tone" },
-    { id: "happy", name: "Happy", icon: Smile, desc: "Cheerful voice" },
-    { id: "excited", name: "Excited", icon: Zap, desc: "Energetic tone" },
-    { id: "calm", name: "Calm", icon: Heart, desc: "Peaceful voice" },
-    { id: "professional", name: "Professional", icon: MessageCircle, desc: "Business tone" },
-    { id: "sad", name: "Sad", icon: Frown, desc: "Melancholic tone" }
+    { id: "Urdu Poetry", name: "Urdu Poetry" },
+    { id: "Documentary", name: "Documentary" },
+    { id: "Cheerful", name: "Cheerful" },
+    { id: "Professional", name: "Professional" },
+    { id: "Conversational", name: "Conversational" }
+  ]
+
+  const speeds = [
+    { id: "0.7", name: "Slow", desc: "0.7x speed" },
+    { id: "0.9", name: "Normal", desc: "0.9x speed" },
+    { id: "1.1", name: "Fast", desc: "1.1x speed" },
+    { id: "1.3", name: "Very Fast", desc: "1.3x speed" }
   ]
 
   // Auto-resize textarea
@@ -80,27 +78,64 @@ export function AudioGenerationPage() {
     }
   }, [prompt])
 
-  // Close dropdowns when clicking outside
+  // Audio event handlers
   useEffect(() => {
-    const handleClickOutside = () => {
-      setShowVoiceDropdown(false)
-      setShowSpeedDropdown(false)
-      setShowEmotionDropdown(false)
+    const audio = audioRef.current
+    if (!audio) return
+
+    const updateTime = () => setCurrentTime(audio.currentTime)
+    const updateDuration = () => setDuration(audio.duration)
+    const handleEnded = () => setIsPlaying(false)
+
+    audio.addEventListener('timeupdate', updateTime)
+    audio.addEventListener('loadedmetadata', updateDuration)
+    audio.addEventListener('ended', handleEnded)
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime)
+      audio.removeEventListener('loadedmetadata', updateDuration)
+      audio.removeEventListener('ended', handleEnded)
     }
-    
-    document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
-  }, [])
+  }, [generatedAudio])
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return
     
     setIsGenerating(true)
-    // Simulate API call
-    setTimeout(() => {
-      setGeneratedAudio("sample-audio-url")
+    
+    try {
+      const response = await fetch('/api/generate-audio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: prompt.trim(),
+          voice: selectedVoice,
+          emotion: selectedEmotion,
+          speed: parseFloat(selectedSpeed)
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate audio')
+      }
+
+      const blob = await response.blob()
+      const audioUrl = URL.createObjectURL(blob)
+      const filename = `audio_${Date.now()}.wav`
+      
+      setGeneratedAudio({
+        url: audioUrl,
+        filename
+      })
+
+    } catch (error) {
+      console.error('Audio generation failed:', error)
+      alert('Failed to generate audio. Please try again.')
+    } finally {
       setIsGenerating(false)
-    }, 5000)
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -110,333 +145,217 @@ export function AudioGenerationPage() {
     }
   }
 
-  const togglePlayback = () => {
+  const togglePlayPause = () => {
+    if (!audioRef.current) return
+    
+    if (isPlaying) {
+      audioRef.current.pause()
+    } else {
+      audioRef.current.play()
+    }
     setIsPlaying(!isPlaying)
   }
 
-  const insertSelection = (type: 'voice' | 'speed' | 'emotion', value: string) => {
-    if (type === 'voice') {
-      setSelectedVoice(value)
-      setShowVoiceDropdown(false)
-    } else if (type === 'speed') {
-      setSelectedSpeed(value)
-      setShowSpeedDropdown(false)
-    } else if (type === 'emotion') {
-      setSelectedEmotion(value)
-      setShowEmotionDropdown(false)
-    }
+  const downloadAudio = () => {
+    if (!generatedAudio) return
+    
+    const link = document.createElement('a')
+    link.href = generatedAudio.url
+    link.download = generatedAudio.filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60)
+    const seconds = Math.floor(time % 60)
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
+
+  const Waveform = () => (
+    <div className="flex items-center justify-center gap-1 h-8">
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="w-1 bg-gradient-to-t from-orange-500 to-orange-300 rounded-full"
+          style={{ 
+            height: `${Math.random() * 20 + 8}px`,
+            opacity: currentTime > 0 && duration > 0 ? (i < (currentTime / duration) * 20 ? 1 : 0.3) : 0.7
+          }}
+          animate={{ 
+            height: isPlaying ? `${Math.random() * 24 + 8}px` : `${Math.random() * 16 + 8}px`
+          }}
+          transition={{ 
+            repeat: isPlaying ? Infinity : 0,
+            duration: 0.5 + Math.random() * 0.5,
+            ease: "easeInOut" 
+          }}
+        />
+      ))}
+    </div>
+  )
+
   return (
-    <div className="h-full flex flex-col p-6">
+    <div className="h-screen flex flex-col overflow-hidden">
       {/* Audio Preview - Centered */}
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center p-6 min-h-0">
         {generatedAudio ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-card border border-border rounded-xl p-8 max-w-4xl w-full max-h-[70vh] overflow-y-auto"
+            className="bg-transparent w-full flex flex-col items-center justify-center"
           >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <Volume2 className="w-6 h-6 text-green-400" />
+            {/* Custom Simple Audio Player */}
+            <div className="w-full mx-auto mb-8 flex justify-center">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative bg-transparent backdrop-blur-xl border-0 rounded-3xl p-6 shadow-none"
+                style={{
+                  background: 'transparent',
+                  backdropFilter: 'none',
+                  WebkitBackdropFilter: 'none',
+                }}
+              >
+                {/* Audio Element */}
+                <audio ref={audioRef} src={generatedAudio.url} />
+                
+                {/* Waveform Visualization */}
+                <div className="mb-6">
+                  <Waveform />
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold">Generated Audio</h2>
-                  <p className="text-muted-foreground">
-                    Voice: {selectedVoice ? voices.find(v => v.id === selectedVoice)?.name : 'Default'} • 
-                    Speed: {selectedSpeed || '1'}x • 
-                    Emotion: {selectedEmotion ? emotions.find(e => e.id === selectedEmotion)?.name : 'Neutral'}
-                  </p>
+                
+                {/* Time Display */}
+                <div className="flex justify-between items-center text-xs text-gray-600 dark:text-gray-400 mb-4">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
                 </div>
-              </div>
-
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Share className="w-4 h-4 mr-2" />
-                  Share
-                </Button>
-              </div>
-            </div>
-
-            {/* Audio Player */}
-            <div className="bg-secondary/30 rounded-xl p-6 mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
+                
+                {/* Controls */}
+                <div className="flex items-center justify-center gap-4">
                   <Button
-                    onClick={togglePlayback}
-                    variant="secondary"
+                    onClick={togglePlayPause}
                     size="lg"
-                    className="rounded-full w-12 h-12"
+                    className="rounded-full w-14 h-14 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg transition-all duration-200"
                   >
-                    {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                    {isPlaying ? (
+                      <Pause className="w-6 h-6 text-white" />
+                    ) : (
+                      <Play className="w-6 h-6 text-white ml-1" />
+                    )}
                   </Button>
                   
-                  <div>
-                    <h3 className="font-medium">Audio Playback</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedVoice ? voices.find(v => v.id === selectedVoice)?.name : 'Default'} voice
-                    </p>
-                  </div>
+                  <Button
+                    onClick={downloadAudio}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full bg-white/10 dark:bg-gray-800/10 border-white/20 dark:border-gray-700/20 hover:bg-white/20 dark:hover:bg-gray-800/20"
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
                 </div>
-
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-400">2:34</div>
-                  <div className="text-xs text-muted-foreground">Duration</div>
-                </div>
-              </div>
-
-              {/* Waveform Visualization */}
-              <div className="flex items-end justify-center gap-1 h-16 mb-4">
-                {Array.from({ length: 50 }).map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="bg-gradient-to-t from-blue-500 to-purple-500 w-1 rounded-full"
-                    style={{ height: `${Math.random() * 100}%` }}
-                    animate={isPlaying ? {
-                      height: [`${Math.random() * 100}%`, `${Math.random() * 100}%`],
-                    } : {}}
-                    transition={{
-                      duration: 0.5,
-                      repeat: isPlaying ? Infinity : 0,
-                      repeatType: "reverse"
-                    }}
-                  />
-                ))}
-              </div>
-
-              {/* Progress Bar */}
-              <div className="w-full bg-secondary rounded-full h-2">
-                <motion.div
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: isPlaying ? "100%" : "0%" }}
-                  transition={{ duration: 154, ease: "linear" }}
-                />
-              </div>
-              
-              <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                <span>0:00</span>
-                <span>2:34</span>
-              </div>
-            </div>
-
-            {/* Audio Stats */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-secondary/30 rounded-lg p-3 text-center">
-                <div className="text-2xl font-bold text-blue-400">MP3</div>
-                <div className="text-xs text-muted-foreground">Format</div>
-              </div>
-              <div className="bg-secondary/30 rounded-lg p-3 text-center">
-                <div className="text-2xl font-bold text-green-400">320kbps</div>
-                <div className="text-xs text-muted-foreground">Quality</div>
-              </div>
-              <div className="bg-secondary/30 rounded-lg p-3 text-center">
-                <div className="text-2xl font-bold text-purple-400">{selectedSpeed || '1'}x</div>
-                <div className="text-xs text-muted-foreground">Speed</div>
-              </div>
-            </div>
-          </motion.div>
-        ) : isGenerating ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-card border border-border rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
-          >
-            <div className="text-center">
-              <RefreshCw className="w-12 h-12 text-blue-400 animate-spin mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Generating Audio...</h3>
-              <p className="text-muted-foreground">
-                Creating speech with {selectedVoice ? voices.find(v => v.id === selectedVoice)?.name : 'default'} voice
-              </p>
-              <div className="mt-4 w-64 bg-secondary rounded-full h-2 mx-auto">
-                <motion.div
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 5 }}
-                />
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-card border border-border rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
-          >
-            <div className="text-center">
-              <div className="w-24 h-24 bg-secondary/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Volume2 className="w-12 h-12 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-medium mb-2">Ready to Generate</h3>
-              <p className="text-muted-foreground">
-                Enter your text and let AI create natural speech
-              </p>
+          <div className="text-center">
+            <div className="w-24 h-24 mx-auto mb-0 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 flex items-center justify-center">
+              <Volume2 className="w-12 h-12 text-orange-600 dark:text-orange-400" />
             </div>
-          </motion.div>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              Generate Audio
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 max-w-sm mx-auto">
+              Enter your text below and select voice settings to create high-quality speech
+            </p>
+          </div>
         )}
       </div>
 
-      {/* Bottom Input Interface */}
-      <div className="mt-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-card border border-border rounded-xl p-6"
-        >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-blue-500/20 rounded-lg">
-            <Wand2 className="w-6 h-6 text-blue-400" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold">Text to Speech</h3>
-            <p className="text-sm text-muted-foreground">
-              Enter text and select voice options
-            </p>
-          </div>
-        </div>
-
-        {/* Feature Buttons */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {/* Voice */}
-          <div className="relative">
+      {/* Input Section - Bottom */}
+      <div className=" bg-white/10 dark:bg-gray-800/10 backdrop-blur-xl border-t border-white/20 dark:border-gray-700/20 rounded-t-2xl p-4 m-auto shadow-xl w-200 h-50"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+        }}
+      >
+        {/* Voice Selection Dropdowns */}
+        <div className="flex flex-wrap gap-3 mb-4">
+          {/* Voice Dropdown */}
+          <div className="relative group" data-dropdown>
             <Button
-              variant={selectedVoice ? "default" : "outline"}
+              variant="outline"
               size="sm"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowVoiceDropdown(!showVoiceDropdown)
-              }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-white/10 dark:bg-gray-800/10 border-white/20 dark:border-gray-700/20 hover:bg-white/20 dark:hover:bg-gray-800/20 text-orange-600 dark:text-orange-400"
             >
-              {selectedVoice ? (
-                <>
-                  <User className="w-4 h-4" />
-                  {voices.find(v => v.id === selectedVoice)?.name}
-                </>
-              ) : (
-                <>
-                  <User className="w-4 h-4" />
-                  Voice
-                </>
-              )}
-              <ChevronDown className="w-3 h-3" />
+              <User className="w-4 h-4" />
+              <span>{voices.find(v => v.id === selectedVoice)?.name || selectedVoice}</span>
+              <ChevronDown className="w-4 h-4" />
             </Button>
             
-            {showVoiceDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-10 min-w-48">
-                {voices.map((voice) => (
-                  <button
-                    key={voice.id}
-                    onClick={() => insertSelection('voice', voice.id)}
-                    className="w-full px-3 py-2 text-left hover:bg-secondary flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    <User className="w-4 h-4" />
-                    <div>
-                      <div className="font-medium">{voice.name}</div>
-                      <div className="text-xs text-muted-foreground">{voice.accent} • {voice.gender}</div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="absolute bottom-full left-0 mb-2 w-48 bg-white/10 dark:bg-gray-800/10 backdrop-blur-3xl border border-white/30 dark:border-gray-700/30 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10"
+                 style={{
+                   backdropFilter: 'blur(40px)',
+                   WebkitBackdropFilter: 'blur(40px)',
+                 }}>
+              {voices.map((voice) => (
+                <button
+                  key={voice.id}
+                  onClick={() => setSelectedVoice(voice.id)}
+                  className="w-full px-4 py-2 text-left hover:bg-white/20 dark:hover:bg-gray-700/30 first:rounded-t-xl last:rounded-b-xl text-black dark:text-white transition-all duration-200"
+                >
+                  <div className="font-medium text-black dark:text-white">{voice.name}</div>
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Speed */}
-          <div className="relative">
+          {/* Emotion Dropdown */}
+          <div className="relative group" data-dropdown>
             <Button
-              variant={selectedSpeed ? "default" : "outline"}
+              variant="outline"
               size="sm"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowSpeedDropdown(!showSpeedDropdown)
-              }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-white/10 dark:bg-gray-800/10 border-white/20 dark:border-gray-700/20 hover:bg-white/20 dark:hover:bg-gray-800/20 text-orange-600 dark:text-orange-400"
             >
-              <Clock className="w-4 h-4" />
-              {selectedSpeed ? speeds.find(s => s.id === selectedSpeed)?.name : "Speed"}
-              <ChevronDown className="w-3 h-3" />
+              <Smile className="w-4 h-4" />
+              <span>{selectedEmotion}</span>
+              <ChevronDown className="w-4 h-4" />
             </Button>
             
-            {showSpeedDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-10">
-                {speeds.map((speed) => (
-                  <button
-                    key={speed.id}
-                    onClick={() => insertSelection('speed', speed.id)}
-                    className="w-full px-3 py-2 text-left hover:bg-secondary first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    {speed.name}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="absolute bottom-full left-0 mb-2 w-48 bg-white/10 dark:bg-gray-800/10 backdrop-blur-3xl border border-white/30 dark:border-gray-700/30 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10"
+                 style={{
+                   backdropFilter: 'blur(40px)',
+                   WebkitBackdropFilter: 'blur(40px)',
+                 }}>
+              {emotions.map((emotion) => (
+                <button
+                  key={emotion.id}
+                  onClick={() => setSelectedEmotion(emotion.id)}
+                  className="w-full px-4 py-2 text-left hover:bg-white/20 dark:hover:bg-gray-700/30 first:rounded-t-xl last:rounded-b-xl text-black dark:text-white transition-all duration-200"
+                >
+                  <div className="font-medium text-black dark:text-white">{emotion.name}</div>
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Emotion */}
-          <div className="relative">
-            <Button
-              variant={selectedEmotion ? "default" : "outline"}
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowEmotionDropdown(!showEmotionDropdown)
-              }}
-              className="flex items-center gap-2"
-            >
-              {selectedEmotion ? (
-                <>
-                  {React.createElement(emotions.find(e => e.id === selectedEmotion)?.icon || Smile, { className: "w-4 h-4" })}
-                  {emotions.find(e => e.id === selectedEmotion)?.name}
-                </>
-              ) : (
-                <>
-                  <Smile className="w-4 h-4" />
-                  Emotion
-                </>
-              )}
-              <ChevronDown className="w-3 h-3" />
-            </Button>
-            
-            {showEmotionDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-10 min-w-48">
-                {emotions.map((emotion) => {
-                  const Icon = emotion.icon
-                  return (
-                    <button
-                      key={emotion.id}
-                      onClick={() => insertSelection('emotion', emotion.id)}
-                      className="w-full px-3 py-2 text-left hover:bg-secondary flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg"
-                    >
-                      <Icon className="w-4 h-4" />
-                      <div>
-                        <div className="font-medium">{emotion.name}</div>
-                        <div className="text-xs text-muted-foreground">{emotion.desc}</div>
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
+
         </div>
 
         {/* Input Field */}
-        <div className="relative">
+        <div className="relative bg-transparent border border-white/10 dark:border-gray-700/10 rounded-2xl p-2 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20">
+          <div className="absolute top-3 left-3 z-10">
+            <Wand2 className="w-5 h-5  text-orange-400" />
+          </div>
           <textarea
             ref={textareaRef}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Enter text to convert to speech... (e.g., 'Welcome to our platform. We're excited to help you achieve your goals.')"
-            className="w-full p-4 pr-12 bg-secondary/50 border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 min-h-[60px] max-h-[200px]"
+            placeholder="Enter text to convert to speech..."
+            className="w-full pl-12 rounded-2xl pr-12 bg-transparent  border-1 resize-none focus:outline-none min-h-[60px] max-h-[100px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             style={{ overflow: 'hidden' }}
           />
           
@@ -461,7 +380,6 @@ export function AudioGenerationPage() {
           </div>
           <span>{prompt.length}/5000 characters</span>
         </div>
-        </motion.div>
       </div>
     </div>
   )
