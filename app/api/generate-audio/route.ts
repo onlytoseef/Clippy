@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
+import { writeFile, mkdir } from 'fs/promises';
+import { join, dirname } from 'path';
 
 export async function POST(request: NextRequest) {
   try {
@@ -102,8 +102,6 @@ export async function POST(request: NextRequest) {
     const filePath = join(process.cwd(), 'public', 'generated-audio', fileName);
 
     // Ensure directory exists
-    const { mkdir } = require('fs/promises');
-    const { dirname } = require('path');
     await mkdir(dirname(filePath), { recursive: true });
 
     // Save WAV file
