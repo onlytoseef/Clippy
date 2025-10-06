@@ -16,14 +16,15 @@ import {
   Mic,
   Headphones,
   User,
-  Flag,
-  Smile,
+  Flame,
+  Heart,
   ChevronDown,
   Send,
   Lightbulb,
   RotateCcw,
   Clock,
-  Activity
+  Activity,
+  Smile
 } from "lucide-react"
 
 type GeneratedAudio = {
@@ -34,8 +35,8 @@ type GeneratedAudio = {
 
 export function AudioGenerationPage() {
   const [prompt, setPrompt] = useState("")
-  const [selectedVoice, setSelectedVoice] = useState("Zephyr")
-  const [selectedEmotion, setSelectedEmotion] = useState("Urdu Poetry")
+  const [selectedVoice, setSelectedVoice] = useState<string | null>(null)
+  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null)
   const [selectedSpeed, setSelectedSpeed] = useState("0.9")
   const [generatedAudio, setGeneratedAudio] = useState<GeneratedAudio | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -43,6 +44,8 @@ export function AudioGenerationPage() {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [showWaveform, setShowWaveform] = useState(true)
+  const [showVoiceDropdown, setShowVoiceDropdown] = useState(false)
+  const [showEmotionDropdown, setShowEmotionDropdown] = useState(false)
   
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -111,8 +114,8 @@ export function AudioGenerationPage() {
         },
         body: JSON.stringify({
           text: prompt.trim(),
-          voice: selectedVoice,
-          emotion: selectedEmotion,
+          voice: selectedVoice || "Zephyr",
+          emotion: selectedEmotion || "Urdu Poetry",
           speed: parseFloat(selectedSpeed)
         })
       })
@@ -197,14 +200,15 @@ export function AudioGenerationPage() {
   )
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      {/* Audio Preview - Centered */}
-      <div className="flex-1 flex items-center justify-center p-6 min-h-0">
+    <div className="h-full p-4 sm:p-6">
+      <div className="h-full flex flex-col">
+        {/* Audio Preview - Centered */}
+        <div className="flex-1 flex items-center justify-center">
         {generatedAudio ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-transparent w-full flex flex-col items-center justify-center"
+            className="bg-transparent border-0 rounded-xl p-8 max-w-5xl w-full max-h-[70vh] overflow-y-auto"
           >
             {/* Custom Simple Audio Player */}
             <div className="w-full mx-auto mb-8 flex justify-center">
@@ -271,83 +275,21 @@ export function AudioGenerationPage() {
             </p>
           </div>
         )}
-      </div>
-
-      {/* Input Section - Bottom */}
-      <div className=" bg-white/10 dark:bg-gray-800/10 backdrop-blur-xl border-t border-white/20 dark:border-gray-700/20 rounded-t-2xl p-4 m-auto shadow-xl w-200 h-50"
-        style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-        }}
-      >
-        {/* Voice Selection Dropdowns */}
-        <div className="flex flex-wrap gap-3 mb-4">
-          {/* Voice Dropdown */}
-          <div className="relative group" data-dropdown>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2 bg-white/10 dark:bg-gray-800/10 border-white/20 dark:border-gray-700/20 hover:bg-white/20 dark:hover:bg-gray-800/20 text-orange-600 dark:text-orange-400"
-            >
-              <User className="w-4 h-4" />
-              <span>{voices.find(v => v.id === selectedVoice)?.name || selectedVoice}</span>
-              <ChevronDown className="w-4 h-4" />
-            </Button>
-            
-            <div className="absolute bottom-full left-0 mb-2 w-48 bg-white/10 dark:bg-gray-800/10 backdrop-blur-3xl border border-white/30 dark:border-gray-700/30 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10"
-                 style={{
-                   backdropFilter: 'blur(40px)',
-                   WebkitBackdropFilter: 'blur(40px)',
-                 }}>
-              {voices.map((voice) => (
-                <button
-                  key={voice.id}
-                  onClick={() => setSelectedVoice(voice.id)}
-                  className="w-full px-4 py-2 text-left hover:bg-white/20 dark:hover:bg-gray-700/30 first:rounded-t-xl last:rounded-b-xl text-black dark:text-white transition-all duration-200"
-                >
-                  <div className="font-medium text-black dark:text-white">{voice.name}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Emotion Dropdown */}
-          <div className="relative group" data-dropdown>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2 bg-white/10 dark:bg-gray-800/10 border-white/20 dark:border-gray-700/20 hover:bg-white/20 dark:hover:bg-gray-800/20 text-orange-600 dark:text-orange-400"
-            >
-              <Smile className="w-4 h-4" />
-              <span>{selectedEmotion}</span>
-              <ChevronDown className="w-4 h-4" />
-            </Button>
-            
-            <div className="absolute bottom-full left-0 mb-2 w-48 bg-white/10 dark:bg-gray-800/10 backdrop-blur-3xl border border-white/30 dark:border-gray-700/30 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10"
-                 style={{
-                   backdropFilter: 'blur(40px)',
-                   WebkitBackdropFilter: 'blur(40px)',
-                 }}>
-              {emotions.map((emotion) => (
-                <button
-                  key={emotion.id}
-                  onClick={() => setSelectedEmotion(emotion.id)}
-                  className="w-full px-4 py-2 text-left hover:bg-white/20 dark:hover:bg-gray-700/30 first:rounded-t-xl last:rounded-b-xl text-black dark:text-white transition-all duration-200"
-                >
-                  <div className="font-medium text-black dark:text-white">{emotion.name}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-
         </div>
 
-        {/* Input Field */}
-        <div className="relative bg-transparent border border-white/10 dark:border-gray-700/10 rounded-2xl p-2 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20">
+      {/* Input Section - Bottom */}
+      <div className="mt-6 flex justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-2xl shadow-xl p-4 transition-all duration-200 max-w-3xl w-full"
+        >
+
+        {/* Input Field - Now at Top */}
+        <div className="relative bg-transparent border border-white/10 dark:border-gray-700/10 rounded-3xl p-3 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20 mb-4">
           <div className="absolute top-3 left-3 z-10">
-            <Wand2 className="w-5 h-5  text-orange-400" />
+            <Wand2 className="w-5 h-5 text-orange-400" />
           </div>
           <textarea
             ref={textareaRef}
@@ -355,8 +297,9 @@ export function AudioGenerationPage() {
             onChange={(e) => setPrompt(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Enter text to convert to speech..."
-            className="w-full pl-12 rounded-2xl pr-12 bg-transparent  border-1 resize-none focus:outline-none min-h-[60px] max-h-[100px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-            style={{ overflow: 'hidden' }}
+            className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[40px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+            style={{ overflow: 'auto' }}
+            rows={1}
           />
           
           <Button
@@ -373,13 +316,100 @@ export function AudioGenerationPage() {
           </Button>
         </div>
 
-        <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Lightbulb className="w-3 h-3" />
-            <span>Use clear punctuation for natural speech rhythm</span>
+        {/* Voice Selection with Character Count - Same Line */}
+        <div className="flex flex-wrap gap-2 mb-2 items-center justify-between">
+          <div className="flex flex-wrap gap-2 items-center">
+        {/* Voice Dropdown */}
+        <div className="relative" data-dropdown>
+            <Button
+              variant="outline"
+              size="sm"
+              onMouseEnter={() => setShowVoiceDropdown(true)}
+              onMouseLeave={() => setShowVoiceDropdown(false)}
+              className={`rounded-full ${selectedVoice ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
+            >
+              {selectedVoice ? (
+                <>
+                  <User className="w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" />
+                  <span className="text-xs whitespace-nowrap">{voices.find(v => v.id === selectedVoice)?.name}</span>
+                </>
+              ) : (
+                <User className="w-4 h-4 text-[#0072a4]" />
+              )}
+            </Button>
+            
+            {showVoiceDropdown && (
+              <div 
+                className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 min-w-[140px]"
+                onMouseEnter={() => setShowVoiceDropdown(true)}
+                onMouseLeave={() => setShowVoiceDropdown(false)}
+              >
+                {voices.map((voice) => (
+                  <button
+                    key={voice.id}
+                    onClick={() => {
+                      setSelectedVoice(voice.id)
+                      setShowVoiceDropdown(false)
+                    }}
+                    className="w-full px-3 py-1.5 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
+                  >
+                    <div className="text-sm">{voice.name}</div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          <span>{prompt.length}/5000 characters</span>
+
+          {/* Emotion Dropdown */}
+          <div className="relative" data-dropdown>
+            <Button
+              variant="outline"
+              size="sm"
+              onMouseEnter={() => setShowEmotionDropdown(true)}
+              onMouseLeave={() => setShowEmotionDropdown(false)}
+              className={`rounded-full ${selectedEmotion ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
+            >
+              {selectedEmotion ? (
+                <>
+                  <Smile className="w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" />
+                  <span className="text-xs whitespace-nowrap">{selectedEmotion}</span>
+                </>
+              ) : (
+                <Smile className="w-4 h-4 text-[#0072a4]" />
+              )}
+            </Button>
+            
+            {showEmotionDropdown && (
+              <div 
+                className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 min-w-[160px]"
+                onMouseEnter={() => setShowEmotionDropdown(true)}
+                onMouseLeave={() => setShowEmotionDropdown(false)}
+              >
+                {emotions.map((emotion) => (
+                  <button
+                    key={emotion.id}
+                    onClick={() => {
+                      setSelectedEmotion(emotion.id)
+                      setShowEmotionDropdown(false)
+                    }}
+                    className="w-full px-3 py-1.5 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
+                  >
+                    <div className="text-sm">{emotion.name}</div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          </div>
+
+          {/* Character Count - Same Line as Features */}
+          <div className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
+            <span>{prompt.length}/5000 characters</span>
+          </div>
         </div>
+
+        </motion.div>
+      </div>
       </div>
     </div>
   )

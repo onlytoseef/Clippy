@@ -19,9 +19,9 @@ import {
   Clock,
   FileVideo,
   Image as ImageIcon,
+  Rocket,
   Brush,
   Drama,
-  Rocket,
   Archive,
   Lightbulb,
   Send,
@@ -268,10 +268,41 @@ export function VideoGenerationPage() {
         >
 
 
-        {/* Feature Buttons */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {/* Style */}
-          <div className="relative">
+        {/* Input Field - Now at Top */}
+        <div className="relative bg-transparent border border-white/10 dark:border-gray-700/10 rounded-3xl p-3 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20 mb-4">
+          <div className="absolute top-3 left-3 z-10">
+            <Wand2 className="w-5 h-5 text-orange-400" />
+          </div>
+          <textarea
+            ref={textareaRef}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Describe your video scene..."
+            className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[40px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+            style={{ overflow: 'auto' }}
+            rows={1}
+          />
+          
+          <Button
+            onClick={handleGenerate}
+            disabled={!prompt.trim() || isGenerating}
+            size="sm"
+            className="absolute right-2 bottom-2"
+          >
+            {isGenerating ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
+
+        {/* Feature Buttons with Character Count - Same Line */}
+        <div className="flex flex-wrap gap-2 mb-2 items-center justify-between">
+          <div className="flex flex-wrap gap-2 items-center">
+        {/* Style */}
+        <div className="relative">
             <Button
               variant={selectedStyle ? "default" : "outline"}
               size="sm"
@@ -283,20 +314,20 @@ export function VideoGenerationPage() {
             >
               {selectedStyle ? (
                 <>
-                  {React.createElement(styles.find(s => s.id === selectedStyle)?.icon || Film, { className: "w-4 h-4" })}
+                  {React.createElement(styles.find(s => s.id === selectedStyle)?.icon || Film, { className: "w-4 h-4 text-[#0072a4]" })}
                   {styles.find(s => s.id === selectedStyle)?.name}
                 </>
               ) : (
                 <>
-                  <Film className="w-4 h-4" />
+                  <Film className="w-4 h-4 text-[#0072a4]" />
                   Style
                 </>
               )}
-              <ChevronDown className="w-3 h-3" />
+              <ChevronDown className="w-3 h-3 text-[#0072a4]" />
             </Button>
             
             {showStyleDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50 min-w-48">
+              <div className="absolute bottom-full left-0 mb-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50 min-w-48">
                 {styles.map((style) => {
                   const Icon = style.icon
                   return (
@@ -334,7 +365,7 @@ export function VideoGenerationPage() {
             </Button>
             
             {showDurationDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
+              <div className="absolute bottom-full left-0 mb-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {durations.map((duration) => (
                   <button
                     key={duration.id}
@@ -365,7 +396,7 @@ export function VideoGenerationPage() {
             </Button>
             
             {showAspectDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
+              <div className="absolute bottom-full left-0 mb-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {aspects.map((aspect) => (
                   <button
                     key={aspect.id}
@@ -379,46 +410,16 @@ export function VideoGenerationPage() {
               </div>
             )}
           </div>
+          </div>
+
+          {/* Character Count - Same Line as Features */}
+          <div className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
+            <span>{prompt.length}/800 characters</span>
+          </div>
         </div>
 
-        {/* Input Field */}
-        <div className="relative bg-transparent border border-white/10 dark:border-gray-700/10 rounded-2xl p-3 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20">
-          <div className="absolute top-3 left-3 z-10">
-            <Wand2 className="w-5 h-5 text-orange-400" />
-          </div>
-          <textarea
-            ref={textareaRef}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Describe your video scene..."
-            className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[60px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-            style={{ overflow: 'hidden' }}
-          />
-          
-          <Button
-            onClick={handleGenerate}
-            disabled={!prompt.trim() || isGenerating}
-            size="sm"
-            className="absolute right-2 bottom-2"
-          >
-            {isGenerating ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
-
-        <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Lightbulb className="w-3 h-3" />
-            <span>Include camera movements, lighting, and specific actions</span>
-          </div>
-          <span>{prompt.length}/800 characters</span>
-        </div>
         </motion.div>
-        </div>
+      </div>
       </div>
     </div>
   )
