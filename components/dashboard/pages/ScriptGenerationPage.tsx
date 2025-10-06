@@ -222,35 +222,62 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
         >
 
 
-        {/* Feature Buttons */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {/* Script Type */}
-          <div className="relative">
+        {/* Input Field - Now at Top */}
+        <div className="relative bg-transparent border border-white/10 dark:border-gray-700/10 rounded-3xl p-3 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20 mb-4">
+          <div className="absolute top-3 left-3 z-10">
+            <Wand2 className="w-5 h-5 text-orange-400" />
+          </div>
+          <textarea
+            ref={textareaRef}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Describe your script idea..."
+            className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[40px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+            style={{ overflow: 'auto' }}
+            rows={1}
+          />
+          
+          <Button
+            onClick={handleGenerate}
+            disabled={!prompt.trim() || isGenerating}
+            size="sm"
+            className="absolute right-2 bottom-2"
+          >
+            {isGenerating ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
+
+        {/* Feature Buttons with Character Count - Same Line */}
+        <div className="flex flex-wrap gap-2 mb-2 items-center justify-between">
+          <div className="flex flex-wrap gap-2 items-center">
+        {/* Script Type */}
+        <div className="relative">
             <Button
-              variant={selectedType ? "default" : "outline"}
+              variant="outline"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
                 setShowTypeDropdown(!showTypeDropdown)
               }}
-              className="flex items-center gap-2 bg-orange-500/20 dark:bg-orange-600/20 backdrop-blur-xl border border-orange-300/30 dark:border-orange-400/30 hover:bg-orange-500/30 dark:hover:bg-orange-600/30 text-orange-900 dark:text-orange-100"
+              className={`rounded-full ${selectedType ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
             >
               {selectedType ? (
                 <>
-                  {React.createElement(scriptTypes.find(t => t.id === selectedType)?.icon || Video, { className: "w-4 h-4" })}
-                  {scriptTypes.find(t => t.id === selectedType)?.name}
+                  {React.createElement(scriptTypes.find(t => t.id === selectedType)?.icon || Video, { className: "w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" })}
+                  <span className="text-xs whitespace-nowrap">{scriptTypes.find(t => t.id === selectedType)?.name}</span>
                 </>
               ) : (
-                <>
-                  <Video className="w-4 h-4" />
-                  Script Type
-                </>
+                <Video className="w-4 h-4 text-[#0072a4]" />
               )}
-              <ChevronDown className="w-3 h-3" />
             </Button>
             
             {showTypeDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50 min-w-48">
+              <div className="absolute bottom-full left-0 mb-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50 min-w-48">
                 {scriptTypes.map((type) => {
                   const Icon = type.icon
                   return (
@@ -274,20 +301,26 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
           {/* Tone */}
           <div className="relative">
             <Button
-              variant={selectedTone ? "default" : "outline"}
+              variant="outline"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
                 setShowToneDropdown(!showToneDropdown)
               }}
-              className="flex items-center gap-2 bg-orange-500/20 dark:bg-orange-600/20 backdrop-blur-xl border border-orange-300/30 dark:border-orange-400/30 hover:bg-orange-500/30 dark:hover:bg-orange-600/30 text-orange-900 dark:text-orange-100"
+              className={`rounded-full ${selectedTone ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
             >
-              {selectedTone ? tones.find(t => t.id === selectedTone)?.name : "Tone"}
-              <ChevronDown className="w-3 h-3" />
+              {selectedTone ? (
+                <>
+                  <Target className="w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" />
+                  <span className="text-xs whitespace-nowrap">{tones.find(t => t.id === selectedTone)?.name}</span>
+                </>
+              ) : (
+                <Target className="w-4 h-4 text-[#0072a4]" />
+              )}
             </Button>
             
             {showToneDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
+              <div className="absolute bottom-full left-0 mb-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {tones.map((tone) => (
                   <button
                     key={tone.id}
@@ -304,21 +337,26 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
           {/* Duration */}
           <div className="relative">
             <Button
-              variant={selectedDuration ? "default" : "outline"}
+              variant="outline"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
                 setShowDurationDropdown(!showDurationDropdown)
               }}
-              className="flex items-center gap-2 bg-orange-500/20 dark:bg-orange-600/20 backdrop-blur-xl border border-orange-300/30 dark:border-orange-400/30 hover:bg-orange-500/30 dark:hover:bg-orange-600/30 text-orange-900 dark:text-orange-100"
+              className={`rounded-full ${selectedDuration ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
             >
-              <Clock className="w-4 h-4" />
-              {selectedDuration ? durations.find(d => d.id === selectedDuration)?.name : "Duration"}
-              <ChevronDown className="w-3 h-3" />
+              {selectedDuration ? (
+                <>
+                  <Clock className="w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" />
+                  <span className="text-xs whitespace-nowrap">{durations.find(d => d.id === selectedDuration)?.name}</span>
+                </>
+              ) : (
+                <Clock className="w-4 h-4 text-[#0072a4]" />
+              )}
             </Button>
             
             {showDurationDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
+              <div className="absolute bottom-full left-0 mb-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
                 {durations.map((duration) => (
                   <button
                     key={duration.id}
@@ -331,41 +369,14 @@ End with a clear call to action. Ask viewers to like, subscribe, comment, or tak
               </div>
             )}
           </div>
-        </div>
-
-        {/* Input Field */}
-        <div className="relative bg-transparent border border-white/10 dark:border-gray-700/10 rounded-2xl p-3 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20">
-          <div className="absolute top-3 left-3 z-10">
-            <Wand2 className="w-5 h-5 text-orange-400" />
           </div>
-          <textarea
-            ref={textareaRef}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Describe your script topic..."
-            className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[60px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-            style={{ overflow: 'hidden' }}
-          />
-          
-          <Button
-            onClick={handleGenerate}
-            disabled={!prompt.trim() || isGenerating}
-            size="sm"
-            className="absolute right-2 bottom-2"
-          >
-            {isGenerating ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
+
+          {/* Character Count - Same Line as Features */}
+          <div className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
+            <span>{prompt.length}/2000 characters</span>
+          </div>
         </div>
 
-        <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-          <span>Press Enter to generate or Shift+Enter for new line</span>
-          <span>{prompt.length}/2000 characters</span>
-        </div>
         </motion.div>
         </div>
       </div>

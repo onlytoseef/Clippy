@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { 
@@ -39,8 +39,8 @@ export function ImageGenerationPage() {
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([])
   const [prompt, setPrompt] = useState("")
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null)
-  const [selectedSize, setSelectedSize] = useState<string>('1K')
-  const [selectedAspectRatio, setSelectedAspectRatio] = useState<string>('1:1')
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState<string | null>(null)
   const [selectedQuality, setSelectedQuality] = useState<string | null>(null)
   const [numberOfImages, setNumberOfImages] = useState<number>(1)
   const [tokensUsed, setTokensUsed] = useState<number>(0)
@@ -125,8 +125,8 @@ export function ImageGenerationPage() {
         body: JSON.stringify({
           prompt: prompt.trim(),
           numberOfImages: numberOfImages,
-          sampleImageSize: selectedSize,
-          aspectRatio: selectedAspectRatio,
+          sampleImageSize: selectedSize || '1K',
+          aspectRatio: selectedAspectRatio || '1:1',
           personGeneration: 'allow_all'
         })
       })
@@ -276,18 +276,35 @@ export function ImageGenerationPage() {
   }
 
   return (
-    <div className="h-full relative">
-      {/* Generated Images Display - Centered */}
-      <div className="h-full flex items-center justify-center p-4 pb-32">
+    <div className="h-full p-4 sm:p-6">
+      <div className="h-full flex flex-col">
+        {/* Generated Images Display - Centered */}
+        <div className="flex-1 flex items-center justify-center">
         {generatedImages.length > 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-transparent border-0 rounded-xl p-8 w-full max-h-[70vh] overflow-y-auto flex justify-center"
+            className="bg-transparent border-0 rounded-xl p-8 max-w-5xl w-full max-h-[70vh] overflow-y-auto"
           >
+            {/* Header with metadata */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500/20 rounded-lg">
+                  <Image className="w-6 h-6 text-green-400" />
+                </div>
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold">Generated Images</h2>
+                  <p className="text-muted-foreground">
+                    {generatedImages.length} image{generatedImages.length > 1 ? 's' : ''} • 
+                    {selectedStyle ? ` Style: ${styles.find(s => s.id === selectedStyle)?.name}` : ''} • 
+                    {selectedSize} Quality
+                  </p>
+                </div>
+              </div>
+            </div>
 
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+            {/* Image Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center">
               {generatedImages.map((image, index) => (
                 <motion.div
                   key={image.id}
@@ -352,7 +369,7 @@ export function ImageGenerationPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-card border border-border rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
+            className="bg-transparent border-0 rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
           >
             <div className="text-center">
               <RefreshCw className="w-12 h-12 text-purple-400 animate-spin mx-auto mb-4" />
@@ -374,7 +391,7 @@ export function ImageGenerationPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-card border border-border rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
+            className="bg-transparent border-0 rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
           >
             <div className="text-center">
               <div className="w-24 h-24 bg-secondary/50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -389,233 +406,17 @@ export function ImageGenerationPage() {
         )}
       </div>
 
-      {/* Input Field Section - Bottom */}
-      <div className="flex-shrink-0 mt-40 p-4">
+      {/* Bottom Input Interface */}
+      <div className="mt-6 flex justify-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-2xl shadow-xl p-4 transition-all duration-200 max-w-3xl w-full mx-auto"
+          className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-2xl shadow-xl p-4 transition-all duration-200 max-w-3xl w-full"
         >
 
-
-        {/* Feature Buttons */}
-        <div className="flex flex-wrap gap-2 mt-2">
-          {/* Style */}
-          <div className="relative" data-dropdown>
-            <Button
-              variant={selectedStyle ? "default" : "outline"}
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                setShowStyleDropdown(prev => !prev)
-              }}
-              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
-            >
-              {selectedStyle ? (
-                <>
-                  {React.createElement(styles.find(s => s.id === selectedStyle)?.icon || Brush, { className: "w-4 h-4" })}
-                  {styles.find(s => s.id === selectedStyle)?.name}
-                </>
-              ) : (
-                <>
-                  <Brush className="w-4 h-4" />
-                  Style
-                </>
-              )}
-              <ChevronDown className="w-3 h-3" />
-            </Button>
-            
-            {showStyleDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50 min-w-48">
-                {styles.map((style) => {
-                  const Icon = style.icon
-                  return (
-                    <button
-                      key={style.id}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        insertSelection('style', style.id)
-                      }}
-                      className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg transition-colors"
-                    >
-                      <Icon className="w-4 h-4" />
-                      <div>
-                        <div className="font-medium">{style.name}</div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400">{style.desc}</div>
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Image Size */}
-          <div className="relative" data-dropdown>
-            <Button
-              variant={selectedSize !== '1K' ? "default" : "outline"}
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                setShowSizeDropdown(prev => !prev)
-              }}
-              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
-            >
-              <Zap className="w-4 h-4" />
-              {imageSizes.find(s => s.id === selectedSize)?.name || "1K Quality"}
-              <ChevronDown className="w-3 h-3" />
-            </Button>
-            
-            {showSizeDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
-                {imageSizes.map((size) => (
-                  <button
-                    key={size.id}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      insertSelection('size', size.id)
-                    }}
-                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
-                  >
-                    <div className="font-medium">{size.name}</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">{size.desc}</div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Aspect Ratio */}
-          <div className="relative" data-dropdown>
-            <Button
-              variant={selectedAspectRatio !== '1:1' ? "default" : "outline"}
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                setShowAspectRatioDropdown(prev => !prev)
-              }}
-              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
-            >
-              <Grid3X3 className="w-4 h-4" />
-              {aspectRatios.find(a => a.id === selectedAspectRatio)?.name || "Square"}
-              <ChevronDown className="w-3 h-3" />
-            </Button>
-            
-            {showAspectRatioDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
-                {aspectRatios.map((ratio) => (
-                  <button
-                    key={ratio.id}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      insertSelection('aspectRatio', ratio.id)
-                    }}
-                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
-                  >
-                    <div className="font-medium">{ratio.name}</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">{ratio.desc}</div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Quality */}
-          <div className="relative" data-dropdown>
-            <Button
-              variant={selectedQuality ? "default" : "outline"}
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                setShowQualityDropdown(prev => !prev)
-              }}
-              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
-            >
-              <Zap className="w-4 h-4" />
-              {selectedQuality ? qualities.find(q => q.id === selectedQuality)?.name : "Quality"}
-              <ChevronDown className="w-3 h-3" />
-            </Button>
-            
-            {showQualityDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
-                {qualities.map((quality) => (
-                  <button
-                    key={quality.id}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      insertSelection('quality', quality.id)
-                    }}
-                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
-                  >
-                    <div className="font-medium">{quality.name}</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">{quality.desc}</div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Number of Images */}
-          <div className="relative" data-dropdown>
-            <Button
-              variant={numberOfImages > 1 ? "default" : "outline"}
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                setShowNumberDropdown(prev => !prev)
-              }}
-              className="flex items-center gap-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100"
-            >
-              <Grid3X3 className="w-4 h-4" />
-              {numberOfImages} Image{numberOfImages > 1 ? 's' : ''}
-              <ChevronDown className="w-3 h-3" />
-            </Button>
-            
-            {showNumberDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 rounded-lg shadow-xl z-50">
-                {[1, 2, 3, 4].map((count) => (
-                  <button
-                    key={count}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      selectNumberOfImages(count)
-                    }}
-                    className="w-full px-3 py-2 text-left hover:bg-white/10 dark:hover:bg-white/5 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
-                  >
-                    <div className="font-medium">{count} Image{count > 1 ? 's' : ''}</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">
-                      Generate {count} image{count > 1 ? 's' : ''} at once
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Token Usage Display */}
-        {tokensUsed > 0 && (
-          <div className="mb-4 p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-orange-400" />
-              <span className="text-sm font-medium">Tokens Used: {tokensUsed}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Input Field */}
-        <div className="relative bg-transparent border mt-5 border-white/10 dark:border-gray-700/10 rounded-2xl p-3 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20">
+        {/* Input Field - Now at Top */}
+        <div className="relative bg-transparent border border-white/10 dark:border-gray-700/10 rounded-3xl p-3 transition-all duration-200 hover:border-white/20 dark:hover:border-gray-600/20 mb-4">
           <div className="absolute top-3 left-3 z-10">
             <Wand2 className="w-5 h-5 text-orange-400" />
           </div>
@@ -625,8 +426,9 @@ export function ImageGenerationPage() {
             onChange={(e) => setPrompt(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Describe your image..."
-            className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[60px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-            style={{ overflow: 'hidden' }}
+            className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[40px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+            style={{ overflow: 'auto' }}
+            rows={1}
           />
           
           <Button
@@ -643,11 +445,271 @@ export function ImageGenerationPage() {
           </Button>
         </div>
 
-        <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-          <span>Press Enter to generate or Shift+Enter for new line</span>
-          <span>{prompt.length}/1000 characters</span>
+        {/* Feature Buttons with Character Count - Same Line */}
+        <div className="flex flex-wrap gap-2  items-center justify-between">
+          <div className="flex flex-wrap gap-2 items-center">
+          {/* Style */}
+          <div className="relative" data-dropdown>
+            <Button
+              variant={selectedStyle ? "default" : "outline"}
+              size="sm"
+              onMouseEnter={() => setShowStyleDropdown(true)}
+              onMouseLeave={() => setShowStyleDropdown(false)}
+              className={`rounded-full ${selectedStyle ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
+            >
+              {selectedStyle ? (
+                <>
+                  <Brush className="w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" />
+                  <span className="text-xs whitespace-nowrap">{styles.find(s => s.id === selectedStyle)?.name}</span>
+                </>
+              ) : (
+                <Brush className="w-4 h-4 text-[#0072a4]" />
+              )}
+            </Button>
+            
+            <AnimatePresence>
+            {showStyleDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 min-w-[160px]"
+                onMouseEnter={() => setShowStyleDropdown(true)}
+                onMouseLeave={() => setShowStyleDropdown(false)}
+              >
+                {styles.map((style) => {
+                  const Icon = style.icon
+                  return (
+                    <button
+                      key={style.id}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        insertSelection('style', style.id)
+                      }}
+                      className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
+                    >
+                      <Icon className="w-4 h-4" />
+                      <div>
+                        <div className="font-medium">{style.name}</div>
+                        <div className="text-xs text-muted-foreground">{style.desc}</div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </motion.div>
+            )}
+            </AnimatePresence>
+          </div>
+
+          {/* Image Size */}
+          <div className="relative" data-dropdown>
+            <Button
+              variant={selectedSize ? "default" : "outline"}
+              size="sm"
+              onMouseEnter={() => setShowSizeDropdown(true)}
+              onMouseLeave={() => setShowSizeDropdown(false)}
+              className={`rounded-full ${selectedSize ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
+            >
+              {selectedSize ? (
+                <>
+                  <Zap className="w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" />
+                  <span className="text-xs whitespace-nowrap">{imageSizes.find(s => s.id === selectedSize)?.name}</span>
+                </>
+              ) : (
+                <Zap className="w-4 h-4 text-[#0072a4]" />
+              )}
+            </Button>
+            
+            <AnimatePresence>
+            {showSizeDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50"
+                onMouseEnter={() => setShowSizeDropdown(true)}
+                onMouseLeave={() => setShowSizeDropdown(false)}
+              >
+                {imageSizes.map((size) => (
+                  <button
+                    key={size.id}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      insertSelection('size', size.id)
+                    }}
+                    className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
+                  >
+                    <div className="font-medium">{size.name}</div>
+                    <div className="text-xs text-muted-foreground">{size.desc}</div>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+            </AnimatePresence>
+          </div>
+
+          {/* Aspect Ratio */}
+          <div className="relative" data-dropdown>
+            <Button
+              variant={selectedAspectRatio ? "default" : "outline"}
+              size="sm"
+              onMouseEnter={() => setShowAspectRatioDropdown(true)}
+              onMouseLeave={() => setShowAspectRatioDropdown(false)}
+              className={`rounded-full ${selectedAspectRatio ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
+            >
+              {selectedAspectRatio ? (
+                <>
+                  <Grid3X3 className="w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" />
+                  <span className="text-xs whitespace-nowrap">{aspectRatios.find(a => a.id === selectedAspectRatio)?.name}</span>
+                </>
+              ) : (
+                <Grid3X3 className="w-4 h-4 text-[#0072a4]" />
+              )}
+            </Button>
+            
+            <AnimatePresence>
+            {showAspectRatioDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50"
+                onMouseEnter={() => setShowAspectRatioDropdown(true)}
+                onMouseLeave={() => setShowAspectRatioDropdown(false)}
+              >
+                {aspectRatios.map((ratio) => (
+                  <button
+                    key={ratio.id}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      insertSelection('aspectRatio', ratio.id)
+                    }}
+                    className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
+                  >
+                    <div className="font-medium">{ratio.name}</div>
+                    <div className="text-xs text-muted-foreground">{ratio.desc}</div>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+            </AnimatePresence>
+          </div>
+
+          {/* Quality */}
+          <div className="relative" data-dropdown>
+            <Button
+              variant={selectedQuality ? "default" : "outline"}
+              size="sm"
+              onMouseEnter={() => setShowQualityDropdown(true)}
+              onMouseLeave={() => setShowQualityDropdown(false)}
+              className={`rounded-full ${selectedQuality ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
+            >
+              {selectedQuality ? (
+                <>
+                  <Sparkles className="w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" />
+                  <span className="text-xs whitespace-nowrap">{qualities.find(q => q.id === selectedQuality)?.name}</span>
+                </>
+              ) : (
+                <Sparkles className="w-4 h-4 text-[#0072a4]" />
+              )}
+            </Button>
+            
+            <AnimatePresence>
+            {showQualityDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50"
+                onMouseEnter={() => setShowQualityDropdown(true)}
+                onMouseLeave={() => setShowQualityDropdown(false)}
+              >
+                {qualities.map((quality) => (
+                  <button
+                    key={quality.id}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      insertSelection('quality', quality.id)
+                    }}
+                    className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
+                  >
+                    <div className="font-medium">{quality.name}</div>
+                    <div className="text-xs text-muted-foreground">{quality.desc}</div>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+            </AnimatePresence>
+          </div>
+
+          {/* Number of Images */}
+          <div className="relative" data-dropdown>
+            <Button
+              variant={numberOfImages > 1 ? "default" : "outline"}
+              size="sm"
+              onMouseEnter={() => setShowNumberDropdown(true)}
+              onMouseLeave={() => setShowNumberDropdown(false)}
+              className={`rounded-full ${numberOfImages > 1 ? 'px-3 py-1.5 h-auto' : 'w-8 h-8 p-0'} flex items-center justify-center gap-1.5 bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 text-gray-900 dark:text-gray-100 transition-all`}
+            >
+              {numberOfImages > 1 ? (
+                <>
+                  <Camera className="w-3.5 h-3.5 flex-shrink-0 text-[#0072a4]" />
+                  <span className="text-xs whitespace-nowrap">{numberOfImages}</span>
+                </>
+              ) : (
+                <Camera className="w-4 h-4 text-[#0072a4]" />
+              )}
+            </Button>
+            
+            <AnimatePresence>
+            {showNumberDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50"
+                onMouseEnter={() => setShowNumberDropdown(true)}
+                onMouseLeave={() => setShowNumberDropdown(false)}
+              >
+                {[1, 2, 3, 4].map((count) => (
+                  <button
+                    key={count}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      selectNumberOfImages(count)
+                    }}
+                    className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors text-gray-900 dark:text-gray-100"
+                  >
+                    <div className="font-medium">{count} Image{count > 1 ? 's' : ''}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Generate {count} image{count > 1 ? 's' : ''} at once
+                    </div>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+            </AnimatePresence>
+          </div>
+          </div>
+
+          {/* Character Count - Same Line as Features */}
+          <div className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
+            <span>{prompt.length}/1000 characters</span>
+          </div>
         </div>
+
         </motion.div>
+        </div>
       </div>
     </div>
   )
