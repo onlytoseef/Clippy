@@ -4,8 +4,9 @@ import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import { 
-  Image, 
+  Image as ImageIcon, 
   Wand2, 
   Download, 
   RefreshCw,
@@ -53,7 +54,7 @@ export function ImageGenerationPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const styles = [
-    { id: "realistic", name: "Realistic", icon: Image, desc: "Photorealistic images" },
+    { id: "realistic", name: "Realistic", icon: ImageIcon, desc: "Photorealistic images" },
     { id: "artistic", name: "Artistic", icon: Brush, desc: "Creative artistic style" },
     { id: "cartoon", name: "Cartoon", icon: Drama, desc: "Animated cartoon style" },
     { id: "abstract", name: "Abstract", icon: Rainbow, desc: "Abstract art style" },
@@ -290,7 +291,7 @@ export function ImageGenerationPage() {
             <div className="flex items-center justify-center mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-500/20 rounded-lg">
-                  <Image className="w-6 h-6 text-green-400" />
+                  <ImageIcon className="w-6 h-6 text-green-400" />
                 </div>
                 <div className="text-center">
                   <h2 className="text-2xl font-bold">Generated Images</h2>
@@ -316,8 +317,10 @@ export function ImageGenerationPage() {
                     boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px'
                   }}
                 >
-                  <img
+                  <Image
                     src={image.dataUrl}
+                    width={256}
+                    height={256}
                     alt={`Generated image ${image.index}`}
                     className="w-full h-64 object-cover"
                   />
@@ -395,7 +398,7 @@ export function ImageGenerationPage() {
           >
             <div className="text-center">
               <div className="w-24 h-24 bg-secondary/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Image className="w-12 h-12 text-muted-foreground" />
+                <ImageIcon className="w-12 h-12 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-medium mb-2">Ready to Create</h3>
               <p className="text-muted-foreground">
