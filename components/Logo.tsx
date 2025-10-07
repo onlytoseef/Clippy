@@ -6,11 +6,11 @@ const Logo = () => {
             <Image
                 src="/logo.webp"
                 alt="Clippy logo"
-                width={30}
-                height={30}
+                width={24}
+                height={24}
                 className="rounded-md"
             />
-            <span className="text-[25px] tracking-wide text-primary mt-0.5">Clippy</span>
+            <span className="text-lg font-bold text-primary mt-0.5">Clippy</span>
         </div>
     )
 }
