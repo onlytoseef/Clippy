@@ -17,7 +17,7 @@ export function HeroSection() {
             heading="AI Voice Generator with Ultra-Realistic"
             highlight="AI Voices"
             subheading="EGenerate human-like voiceovers with our AI voice generator built on our second generation text to speech model. Use our low-latency TTS model to create voice AI agents, audio products, training & marketing voiceovers, podcasts, and much more."
-            className="text-5xl md:text-7xl leading-tight"
+            isHero = {true}
           />
 
           <motion.div

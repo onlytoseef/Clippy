@@ -37,7 +37,7 @@ export function Navbar() {
                 href={href}
                 className="flex items-center space-x-1 text-foreground hover:text-primary cursor-pointer transition-colors"
               >
-                <span>{label}</span>
+                <p>{label}</p>
                
               </Link>
             ))}

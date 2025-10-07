@@ -18,7 +18,7 @@ export function TutorialVideoSection() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4 leading-tight">
-              Clippy <span className="text-accent">Tutorial</span>
+              Clippy <span className="text-accent tracking-wider font-semibold text-[54px]">Tutorial</span>
             </h1>
             <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
               Learn to create professional content with our AI voice platform

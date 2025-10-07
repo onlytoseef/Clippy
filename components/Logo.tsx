@@ -2,7 +2,7 @@ import Image from "next/image"
 
 const Logo = () => {
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
             <Image
                 src="/logo.webp"
                 alt="Clippy logo"
@@ -10,7 +10,7 @@ const Logo = () => {
                 height={30}
                 className="rounded-md"
             />
-            <span className="text-xl font-bold text-primary mt-0.5">Clippy</span>
+            <span className="text-[25px] tracking-wide text-primary mt-0.5">Clippy</span>
         </div>
     )
 }

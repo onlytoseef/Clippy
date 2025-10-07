@@ -47,7 +47,7 @@ export default function ThumbnailShowcase() {
   const bottomRow = thumbnails.slice(4, 8)
 
   return (
-    <section className="relative min-h-screen py-20 px-4 overflow-hidden">
+    <section className="relative min-h-screen py-20 px-14 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div

@@ -39,7 +39,7 @@ export default function VideoScriptGenerator() {
   }
 
   return (
-    <section className="relative min-h-screen py-20 px-4 flex items-center justify-center bg-background">
+    <section className="relative min-h-screen py-20 px-14 flex items-center justify-center bg-background">
       <div className="container mx-auto max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
@@ -53,7 +53,7 @@ export default function VideoScriptGenerator() {
 
               <h1 className="text-5xl md:text-6xl font-bold leading-tight">
                 Generate Video Scripts{" "}
-                <span className="text-primary">Quickly</span>
+                <span className="text-primary font-semibold tracking-wider text-7xl">Quickly</span>
               </h1>
 
               <p className="text-xl text-foreground/70 leading-relaxed">
