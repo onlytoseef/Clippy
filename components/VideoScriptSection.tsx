@@ -17,7 +17,7 @@ const scriptExamples = [
     id: 2,
     title: "Luxury Holidays",
     prompt: "A script about luxury travel...",
-    duration: "2:15", 
+    duration: "2:15",
     style: "Luxury"
   },
   {
@@ -106,7 +106,7 @@ export default function VideoScriptGenerator() {
                   </div>
                 )}
               </Button>
-              
+
               <div className="flex items-center gap-6 text-sm text-foreground/60">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
@@ -133,11 +133,10 @@ export default function VideoScriptGenerator() {
                 initial={{ opacity: 0, x: 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
-                  selectedScript === script.id 
-                    ? 'border-primary bg-primary/5' 
+                className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${selectedScript === script.id
+                    ? 'border-primary bg-primary/5'
                     : 'border-border bg-card hover:border-primary/30'
-                }`}
+                  }`}
                 onClick={() => setSelectedScript(script.id)}
               >
                 <div className="flex items-start justify-between mb-3">
@@ -147,9 +146,9 @@ export default function VideoScriptGenerator() {
                     <span>{script.duration}</span>
                   </div>
                 </div>
-                
+
                 <p className="text-foreground/70 mb-3 italic">&quot;{script.prompt}&quot;</p>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-primary font-medium">{script.style}</span>
                   <FileText className="w-5 h-5 text-foreground/60" />
