@@ -325,44 +325,44 @@ export function ImageGenerationPage() {
                     className="w-full h-64 object-cover"
                   />
                   
-                  {/* Download button - bottom left */}
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      downloadImage(image)
-                    }}
-                    className="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  >
-                    <Download className="w-4 h-4" />
-                  </Button>
+                  {/* Action buttons in a row */}
+                  <div className="absolute bottom-3 left-3 flex gap-2">
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        downloadImage(image)
+                      }}
+                      className="h-8 w-8"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                    </Button>
 
-                  {/* Center overlay buttons */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <div className="flex gap-2">
-                      <Button 
-                        size="sm" 
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          expandImage(image)
-                        }}
-                      >
-                        <Expand className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          copyImage(image)
-                        }}
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                    </div>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        expandImage(image)
+                      }}
+                      className="h-8 w-8"
+                    >
+                      <Expand className="w-3.5 h-3.5" />
+                    </Button>
+
+                    <Button 
+                      size="icon"
+                      variant="secondary"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        copyImage(image)
+                      }}
+                      className="h-8 w-8"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
                   </div>
                 </motion.div>
               ))}
@@ -370,22 +370,69 @@ export function ImageGenerationPage() {
           </motion.div>
         ) : isGenerating ? (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-transparent border-0 rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-transparent border-0 rounded-xl p-8 max-w-5xl w-full max-h-[70vh] overflow-y-auto"
           >
-            <div className="text-center">
-              <RefreshCw className="w-12 h-12 text-purple-400 animate-spin mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Generating Images...</h3>
-              <p className="text-muted-foreground">
-                Creating {selectedStyle ? styles.find(s => s.id === selectedStyle)?.name.toLowerCase() : 'beautiful'} images for you
-              </p>
-              <div className="mt-4 w-64 bg-secondary rounded-full h-2 mx-auto">
+            {/* Header with metadata */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500/20 rounded-lg">
+                  <RefreshCw className="w-6 h-6 text-purple-400 animate-spin" />
+                </div>
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold">Generating Images...</h2>
+                  <p className="text-muted-foreground">
+                    Creating {numberOfImages} {selectedStyle ? styles.find(s => s.id === selectedStyle)?.name.toLowerCase() : 'beautiful'} image{numberOfImages > 1 ? 's' : ''} for you
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Skeleton Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center">
+              {Array.from({ length: numberOfImages }).map((_, index) => (
                 <motion.div
-                  className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full"
+                  key={`skeleton-${index}`}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  className="relative bg-secondary/30 rounded-xl overflow-hidden w-full"
+                  style={{
+                    boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px'
+                  }}
+                >
+                  {/* Skeleton Image */}
+                  <div className="w-full h-64 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse relative overflow-hidden">
+                    {/* Shimmer effect */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      animate={{
+                        x: ['-100%', '100%']
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                    />
+                    {/* Center icon */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Image className="w-16 h-16 text-gray-400 dark:text-gray-500 opacity-30" />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Progress bar */}
+            <div className="mt-6 w-full max-w-md mx-auto">
+              <div className="bg-secondary rounded-full h-2">
+                <motion.div
+                  className="bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 h-2 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: "100%" }}
-                  transition={{ duration: 4 }}
+                  transition={{ duration: 4, ease: "easeInOut" }}
                 />
               </div>
             </div>
@@ -434,18 +481,10 @@ export function ImageGenerationPage() {
             rows={1}
           />
           
-          <Button
-            onClick={handleGenerate}
-            disabled={!prompt.trim() || isGenerating}
-            size="sm"
-            className="absolute right-2 bottom-2"
-          >
-            {isGenerating ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
+          {/* Character Count - Now in Button Position */}
+          <div className="absolute right-3 bottom-3 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+            <span>{prompt.length}/1000</span>
+          </div>
         </div>
 
         {/* Feature Buttons with Character Count - Same Line */}
@@ -705,9 +744,37 @@ export function ImageGenerationPage() {
           </div>
           </div>
 
-          {/* Character Count - Same Line as Features */}
-          <div className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
-            <span>{prompt.length}/1000 characters</span>
+          {/* Generate Button - Now in Character Count Position */}
+          <div className="ml-auto hover:cursor-pointer relative">
+            <Button
+            
+              onClick={handleGenerate}
+              disabled={!prompt.trim() || isGenerating}
+              className="relative font-normal hover:cursor-pointer px-8 py-3 rounded-full transition-all duration-300 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed border-0 text-[#0072a4] text-base bg-white dark:bg-gray-900"
+              style={{ fontFamily: 'Nunito, sans-serif' }}
+            >
+              <span className="absolute inset-0 rounded-full" style={{
+                background: 'linear-gradient(to right, #5ED1E4, #A8D5AA, #F4C27E, #ED823A)',
+                padding: '5px',
+                WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                WebkitMaskComposite: 'xor',
+                maskComposite: 'exclude',
+              }} />
+              <span className="relative z-10 flex items-center gap-2 text-[#0072a4]">
+                {isGenerating ? (
+                  <>
+                    <Sparkles className="w-5 h-5 animate-pulse text-[#0072a4]" />
+                    <span>Generating...</span>
+                    <Sparkles className="w-5 h-5 animate-pulse text-[#0072a4]" />
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5 text-[#0072a4]" />
+                    <span>Generate</span>
+                  </>
+                )}
+              </span>
+            </Button>
           </div>
         </div>
 
