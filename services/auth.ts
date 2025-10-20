@@ -9,7 +9,7 @@ export const signup = async (form: any) => {
 // ✅ Login
 export const login = async (form: any) => {
   const { data } = await api.post("/api/v1/auth/login", form)
-  return data
+  return data.data
 }
 
 // ✅ Verify Email

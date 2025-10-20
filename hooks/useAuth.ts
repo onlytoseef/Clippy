@@ -10,11 +10,13 @@ export const useLogin = () => {
 
     return useMutation({
         mutationFn: login,
-        onSuccess: () => {
+        onSuccess: (data: any) => {
             toast({
                 title: "Login Successful",
             })
-            router.push("/")
+            router.push("/pricing")
+            console.log(data)
+            localStorage.setItem("auth_token_x", data.token)
         },
         onError: (err: any) => {
             const response = err?.response?.data
@@ -68,7 +70,7 @@ export const useVerifyEmail = () => {
                 title: "Verification Successful",
                 description: "Your email has been verified. Please log in.",
             })
-            router.push("/")
+            router.push("/pricing")
         },
         onError: (err: any) => {
             toast({
