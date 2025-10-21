@@ -1,9 +1,11 @@
 "use client"
 
-import { useMutation } from "@tanstack/react-query"
-import { login, signup, verifyEmail, logout, resendCode } from "@/services/auth"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { login, signup, verifyEmail, logout, resendCode, getCurrentUser, updateUser } from "@/services/auth"
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/toast"
+import { ProfileSchema } from "@/validations/profile"
+import { AxiosError } from "axios"
 
 export const useLogin = () => {
     const router = useRouter()
@@ -18,7 +20,7 @@ export const useLogin = () => {
             console.log(data)
             localStorage.setItem("auth_token_x", data.token)
         },
-        onError: (err: any) => {
+        onError: (err: AxiosError<ErrorResponse>) => {
             const response = err?.response?.data
 
             if (response?.data?.needsVerification) {
@@ -50,7 +52,7 @@ export const useSignup = () => {
             })
             router.push("/auth/login")
         },
-        onError: (err: any) => {
+        onError: (err: AxiosError<ErrorResponse>) => {
             toast({
                 title: "Signup Failed",
                 description: `${err?.response?.data?.message || "Something went wrong"}`,
@@ -117,6 +119,37 @@ export const useResendCode = () => {
             toast({
                 title: "Code Resent Failed",
                 description: `${error?.response?.data?.message || "Something went wrong while resending the code."}`,
+                variant: "destructive",
+            })
+        },
+    })
+}
+
+export const useGetUser = () => {
+    return useQuery({
+        queryKey: ["user"],
+        queryFn: getCurrentUser,
+    })
+}
+
+export const useUpdateUser = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: (data: ProfileSchema) => updateUser(data),
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["user"] })
+
+            toast({
+                title: "Profile updated",
+            })
+        },
+
+        onError: (error: AxiosError<ErrorResponse>) => {
+            toast({
+                title: "Update failed",
+                description: error?.response?.data?.message || "Something went wrong.",
                 variant: "destructive",
             })
         },
