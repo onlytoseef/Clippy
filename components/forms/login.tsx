@@ -41,7 +41,10 @@ export default function LoginForm() {
                 transition={{ duration: 0.6 }}
                 className="w-full lg:w-1/2 flex flex-col justify-center px-8 lg:px-12 xl:px-16"
             >
-                <div className="w-full max-w-md mx-auto space-y-6">
+                <form 
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="w-full max-w-md mx-auto space-y-6"
+                >
                     {/* Logo and Title */}
                     <div className="text-center space-y-3">
                         <div className="flex justify-center">
@@ -104,7 +107,6 @@ export default function LoginForm() {
                             size="xl"
                             className="w-full rounded-full"
                             disabled={isPending}
-                            onClick={handleSubmit(onSubmit)}
                         >
                             {isPending ? "Signing in..." : "Sign in"}
                         </Button>
@@ -125,7 +127,8 @@ export default function LoginForm() {
                         <button
                             type="button"
                             onClick={() => signIn("google")}
-                            className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-border rounded-full shadow-sm bg-card text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-colors"
+                            disabled={isPending}
+                            className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-border rounded-full shadow-sm bg-card text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                                 <path
@@ -151,7 +154,7 @@ export default function LoginForm() {
                         {/* Sign Up Link */}
                         <Footer type="login" />
                     </div>
-                </div>
+                </form>
             </motion.div>
 
             {/* Right side - Professional Image */}

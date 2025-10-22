@@ -10,7 +10,7 @@ import {
 } from "@/components/dashboard/pages"
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState('script') // Default to script generation
+  const [activeTab, setActiveTab] = useState('script');
 
   const renderContent = () => {
     switch (activeTab) {

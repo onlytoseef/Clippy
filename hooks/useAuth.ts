@@ -16,8 +16,7 @@ export const useLogin = () => {
             toast({
                 title: "Login Successful",
             })
-            router.push("/pricing")
-            console.log(data)
+            router.push("/")
             localStorage.setItem("auth_token_x", data.token)
         },
         onError: (err: AxiosError<ErrorResponse>) => {
@@ -72,7 +71,7 @@ export const useVerifyEmail = () => {
                 title: "Verification Successful",
                 description: "Your email has been verified. Please log in.",
             })
-            router.push("/pricing")
+            router.push("/")
         },
         onError: (err: any) => {
             toast({

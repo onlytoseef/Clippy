@@ -23,6 +23,7 @@ export default function SignUpForm() {
         handleSubmit,
         trigger,
         formState: { errors },
+        clearErrors,
     } = useForm<SignUpFormData>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
@@ -33,24 +34,33 @@ export default function SignUpForm() {
             confirmPassword: "",
             user_type: "user",
         },
-        mode: "onSubmit",
+        mode: "onSubmit", // Only validate on submit
+        reValidateMode: "onChange", // Re-validate on change after first submit
     });
 
     const onSubmit = (data: SignUpFormData) => {
         signUp(data);
     };
 
-    // validate only fields of current step
+    // Validate only fields of current step
     const nextStep = async () => {
         let stepFields: (keyof SignUpFormData)[] = [];
         if (step === 1) stepFields = ["firstName", "lastName", "email"];
         if (step === 2) stepFields = ["password", "confirmPassword"];
 
         const isValid = await trigger(stepFields);
-        if (isValid) setStep((prev) => prev + 1);
+        if (isValid) {
+            // Clear errors when moving to next step
+            clearErrors(stepFields);
+            setStep((prev) => prev + 1);
+        }
     };
 
-    const prevStep = () => setStep((prev) => prev - 1);
+    const prevStep = () => {
+        // Clear errors when going back
+        clearErrors();
+        setStep((prev) => prev - 1);
+    };
 
     return (
         <div className="h-screen w-full flex overflow-hidden bg-gradient-hero">
@@ -73,6 +83,8 @@ export default function SignUpForm() {
                         </div>
                     </div>
 
+                    
+
                     {/* Form Steps */}
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <AnimatePresence mode="wait">
@@ -93,6 +105,7 @@ export default function SignUpForm() {
                                             variant="outline"
                                             size="xl"
                                             className="w-full rounded-full border-border hover:bg-muted transition-colors"
+                                            type="button"
                                         >
                                             Sign up with Email
                                             <ArrowRight className="h-5 w-5 text-foreground/50 ml-2" />
@@ -102,6 +115,7 @@ export default function SignUpForm() {
                                             variant="outline"
                                             size="xl"
                                             className="w-full rounded-full border-border hover:bg-muted transition-colors"
+                                            type="button"
                                         >
                                             <FcGoogle className="w-5 h-5 mr-2" />
                                             Sign up with Google
@@ -155,6 +169,7 @@ export default function SignUpForm() {
                                             variant="outline"
                                             size="lg"
                                             className="rounded-full"
+                                            type="button"
                                         >
                                             <ArrowLeft className="h-4 w-4 mr-2" />
                                             Back
@@ -185,6 +200,7 @@ export default function SignUpForm() {
                                     transition={{ duration: 0.3 }}
                                     className="space-y-6"
                                 >
+
                                     <div className="space-y-4">
                                         <Input
                                             type="password"
@@ -200,6 +216,7 @@ export default function SignUpForm() {
                                             {...register("confirmPassword")}
                                             error={errors.confirmPassword?.message}
                                         />
+                                        
                                     </div>
 
                                     <div className="flex justify-between pt-2">
@@ -208,6 +225,7 @@ export default function SignUpForm() {
                                             variant="outline"
                                             size="lg"
                                             className="rounded-full"
+                                            type="button"
                                         >
                                             <ArrowLeft className="h-4 w-4 mr-2" />
                                             Back
