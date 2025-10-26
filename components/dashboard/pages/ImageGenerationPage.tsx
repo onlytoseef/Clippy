@@ -750,7 +750,7 @@ export function ImageGenerationPage() {
             
               onClick={handleGenerate}
               disabled={!prompt.trim() || isGenerating}
-              className="relative font-normal hover:cursor-pointer px-8 py-3 rounded-full transition-all duration-300 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed border-0 text-[#0072a4] text-base bg-white dark:bg-gray-900"
+              className="relative font-normal hover:cursor-pointer px-5 py-3 rounded-full transition-all duration-300 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed border-0 text-[#0072a4] text-base bg-white dark:bg-gray-900"
               style={{ fontFamily: 'Nunito, sans-serif' }}
             >
               <span className="absolute inset-0 rounded-full" style={{

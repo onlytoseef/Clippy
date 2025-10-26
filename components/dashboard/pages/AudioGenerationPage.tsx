@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { 
@@ -24,7 +24,9 @@ import {
   RotateCcw,
   Clock,
   Activity,
-  Smile
+  Smile,
+  SkipBack,
+  SkipForward
 } from "lucide-react"
 
 type GeneratedAudio = {
@@ -159,6 +161,16 @@ export function AudioGenerationPage() {
     setIsPlaying(!isPlaying)
   }
 
+  const skipBackward = () => {
+    if (!audioRef.current) return
+    audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 5)
+  }
+
+  const skipForward = () => {
+    if (!audioRef.current) return
+    audioRef.current.currentTime = Math.min(duration, audioRef.current.currentTime + 5)
+  }
+
   const downloadAudio = () => {
     if (!generatedAudio) return
     
@@ -210,16 +222,30 @@ export function AudioGenerationPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-transparent border-0 rounded-xl p-8 max-w-5xl w-full max-h-[70vh] overflow-y-auto"
           >
+            {/* Header with metadata */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500/20 rounded-lg">
+                  <Volume2 className="w-6 h-6 text-green-400" />
+                </div>
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold">Generated Audio</h2>
+                  <p className="text-muted-foreground">
+                    {selectedVoice ? voices.find(v => v.id === selectedVoice)?.name : 'Default Voice'} • 
+                    {selectedEmotion || 'Neutral'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Custom Simple Audio Player */}
-            <div className="w-full mx-auto mb-8 flex justify-center">
+            <div className="w-full mx-auto flex justify-center">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative bg-transparent backdrop-blur-xl border-0 rounded-3xl p-6 shadow-none"
+                className="relative bg-secondary/30 backdrop-blur-xl border-0 rounded-3xl p-8 shadow-lg w-full max-w-2xl"
                 style={{
-                  background: 'transparent',
-                  backdropFilter: 'none',
-                  WebkitBackdropFilter: 'none',
+                  boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px'
                 }}
               >
                 {/* Audio Element */}
@@ -238,6 +264,17 @@ export function AudioGenerationPage() {
                 
                 {/* Controls */}
                 <div className="flex items-center justify-center gap-4">
+                  {/* Skip Backward Button */}
+                  <Button
+                    onClick={skipBackward}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full bg-white/10 dark:bg-gray-800/10 border-white/20 dark:border-gray-700/20 hover:bg-white/20 dark:hover:bg-gray-800/20"
+                  >
+                    <SkipBack className="w-4 h-4" />
+                  </Button>
+
+                  {/* Play/Pause Button */}
                   <Button
                     onClick={togglePlayPause}
                     size="lg"
@@ -249,7 +286,18 @@ export function AudioGenerationPage() {
                       <Play className="w-6 h-6 text-white ml-1" />
                     )}
                   </Button>
+
+                  {/* Skip Forward Button */}
+                  <Button
+                    onClick={skipForward}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full bg-white/10 dark:bg-gray-800/10 border-white/20 dark:border-gray-700/20 hover:bg-white/20 dark:hover:bg-gray-800/20"
+                  >
+                    <SkipForward className="w-4 h-4" />
+                  </Button>
                   
+                  {/* Download Button */}
                   <Button
                     onClick={downloadAudio}
                     variant="outline"
@@ -263,17 +311,21 @@ export function AudioGenerationPage() {
             </div>
           </motion.div>
         ) : (
-          <div className="text-center">
-            <div className="w-24 h-24 mx-auto mb-0 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 flex items-center justify-center">
-              <Volume2 className="w-12 h-12 text-orange-600 dark:text-orange-400" />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-transparent border-0 rounded-xl p-8 max-w-4xl w-full flex items-center justify-center"
+          >
+            <div className="text-center">
+              <div className="w-24 h-24 bg-secondary/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Volume2 className="w-12 h-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-medium mb-2">Ready to Create</h3>
+              <p className="text-muted-foreground max-w-sm mx-auto">
+                Enter your text below in any Language and select voice settings to create high-quality speech
+              </p>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              Generate Audio
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 max-w-sm mx-auto">
-              Enter your text below and select voice settings to create high-quality speech
-            </p>
-          </div>
+          </motion.div>
         )}
         </div>
 
@@ -296,27 +348,19 @@ export function AudioGenerationPage() {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Enter text to convert to speech..."
+            placeholder="Input your text in desired language ..."
             className="w-full pl-12 pr-12 bg-transparent border-none resize-none focus:outline-none min-h-[40px] max-h-[200px] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             style={{ overflow: 'auto' }}
             rows={1}
           />
           
-          <Button
-            onClick={handleGenerate}
-            disabled={!prompt.trim() || isGenerating}
-            size="sm"
-            className="absolute right-2 bottom-2"
-          >
-            {isGenerating ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
+          {/* Character Count - Now in Button Position */}
+          <div className="absolute right-3 bottom-3 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+            <span>{prompt.length}/5000</span>
+          </div>
         </div>
 
-        {/* Voice Selection with Character Count - Same Line */}
+        {/* Voice Selection with Generate Button - Same Line */}
         <div className="flex flex-wrap gap-2 mb-2 items-center justify-between">
           <div className="flex flex-wrap gap-2 items-center">
         {/* Voice Dropdown */}
@@ -338,8 +382,13 @@ export function AudioGenerationPage() {
               )}
             </Button>
             
+            <AnimatePresence>
             {showVoiceDropdown && (
-              <div 
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
                 className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 min-w-[140px]"
                 onMouseEnter={() => setShowVoiceDropdown(true)}
                 onMouseLeave={() => setShowVoiceDropdown(false)}
@@ -356,8 +405,9 @@ export function AudioGenerationPage() {
                     <div className="text-sm">{voice.name}</div>
                   </button>
                 ))}
-              </div>
+              </motion.div>
             )}
+            </AnimatePresence>
           </div>
 
           {/* Emotion Dropdown */}
@@ -379,8 +429,13 @@ export function AudioGenerationPage() {
               )}
             </Button>
             
+            <AnimatePresence>
             {showEmotionDropdown && (
-              <div 
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
                 className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 min-w-[160px]"
                 onMouseEnter={() => setShowEmotionDropdown(true)}
                 onMouseLeave={() => setShowEmotionDropdown(false)}
@@ -397,14 +452,42 @@ export function AudioGenerationPage() {
                     <div className="text-sm">{emotion.name}</div>
                   </button>
                 ))}
-              </div>
+              </motion.div>
             )}
+            </AnimatePresence>
           </div>
           </div>
 
-          {/* Character Count - Same Line as Features */}
-          <div className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
-            <span>{prompt.length}/5000 characters</span>
+          {/* Generate Button - Now in Character Count Position */}
+          <div className="ml-auto relative">
+            <Button
+              onClick={handleGenerate}
+              disabled={!prompt.trim() || isGenerating}
+              className="relative font-normal hover:cursor-pointer px-5 py-3 rounded-full transition-all duration-300 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed border-0 text-[#0072a4] text-base bg-white dark:bg-gray-900"
+              style={{ fontFamily: 'Nunito, sans-serif' }}
+            >
+              <span className="absolute inset-0 rounded-full" style={{
+                background: 'linear-gradient(to right, #5ED1E4, #A8D5AA, #F4C27E, #ED823A)',
+                padding: '5px',
+                WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                WebkitMaskComposite: 'xor',
+                maskComposite: 'exclude',
+              }} />
+              <span className="relative z-10 flex items-center gap-2 text-[#0072a4]">
+                {isGenerating ? (
+                  <>
+                    <Sparkles className="w-5 h-5 animate-pulse text-[#0072a4]" />
+                    <span>Generating...</span>
+                    <Sparkles className="w-5 h-5 animate-pulse text-[#0072a4]" />
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5 text-[#0072a4]" />
+                    <span>Generate</span>
+                  </>
+                )}
+              </span>
+            </Button>
           </div>
         </div>
 
