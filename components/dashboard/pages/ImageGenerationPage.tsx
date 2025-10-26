@@ -418,7 +418,7 @@ export function ImageGenerationPage() {
                     />
                     {/* Center icon */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Image className="w-16 h-16 text-gray-400 dark:text-gray-500 opacity-30" />
+                      <ImageIcon className="w-16 h-16 text-gray-400 dark:text-gray-500 opacity-30" />
                     </div>
                   </div>
                 </motion.div>
