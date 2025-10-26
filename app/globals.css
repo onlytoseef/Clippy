@@ -141,9 +141,12 @@
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Poppins', sans-serif;
 }
-
-body, p, span, li, input, button {
+body, p, li, input, button {
   font-family: 'Nunito', sans-serif;
+}
+
+span {
+  font-family: 'Mouse Memoirs', sans-serif;
 }
 
 @layer base {

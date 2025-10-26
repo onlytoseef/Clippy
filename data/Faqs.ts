@@ -2,65 +2,72 @@
 export const homeFaqs = [
   {
     id: 1,
-    question: "How does Clippy's AI voice generation work?",
+    question: "What can I create with Clippy?",
     answer:
-      "Clippy uses advanced neural networks trained on thousands of hours of human speech. Simply input your text, choose a voice, and our AI generates natural-sounding audio in seconds. The technology analyzes speech patterns, emotions, and pronunciation to create human-like voiceovers.",
+      "With Clippy, you can generate scripts, voices, and images. Soon, you’ll also be able to create videos and background music.",
   },
   {
     id: 2,
-    question: "What's included in the free trial?",
+    question: "Which languages does Clippy support?",
     answer:
-      "Our free trial includes 10,000 characters of text-to-speech conversion, access to 20+ voices, and all basic features. No credit card required. You can upgrade anytime to unlock unlimited characters, premium voices, and advanced features.",
+      "Clippy supports multiple languages for both scripts and voices, allowing you to create content for a global audience.",
   },
   {
     id: 3,
-    question: "Can I use custom voices or clone my own voice?",
+    question: "What makes Clippy’s Image Generator special?",
     answer:
-      "Yes! Our Pro and Enterprise plans include voice cloning technology. Upload a 5-minute sample of your voice, and our AI will create a custom voice model. This feature is perfect for brands wanting consistent voice identity across all content.",
+      "Clippy’s Image Generator offers more than 20 unique styles, multiple aspect ratios, and the ability to use style and scene references—giving you full creative control. On top of that, it’s highly affordable compared to traditional design tools or hiring artists, making professional visuals accessible to everyone.",
   },
   {
     id: 4,
-    question: "Is my data secure and private?",
+    question: "Do I need technical skills to use Clippy?",
     answer:
-      "Absolutely. We use enterprise-grade encryption, comply with GDPR and SOC 2 standards, and never store your audio files longer than necessary. All voice processing happens on secure servers, and we never use your data to train our models without explicit consent.",
+      "No. Clippy is simple and user-friendly. You just select your content type, set your preferences, and generate.",
   },
   {
     id: 5,
-    question: "What audio formats are supported?",
+    question: "Will I face copyright issues with Clippy’s generated content?",
     answer:
-      "Clippy supports multiple output formats including MP3, WAV, and OGG. You can adjust quality settings from 64kbps to 320kbps, and choose sample rates up to 48kHz for professional-grade audio output.",
+      "No. Clippy generates original and unique content every time. Scripts, voices, and images are created fresh, so you don’t have to worry about duplication or copyright strikes. However, if you provide copyrighted input (like a protected script or media), you should ensure you have the right to use it.",
   },
   {
     id: 6,
-    question: "How many languages do you support?",
+    question: "Can I monetize the content I create with Clippy?",
     answer:
-      "We support 120+ languages and dialects, including English, Spanish, French, German, Japanese, Mandarin, Hindi, and many more. Each language has multiple voice options with different accents and speaking styles.",
-  },
-]
+      "Yes. You can use Clippy-generated scripts, voices, and images in your videos, ads, or other projects and monetize them on platforms like YouTube or social media. Since the content is unique, it’s safe to use for commercial purposes.",
+  }
+];
+
 
 export const pricingFaqs = [
   {
     id: 1,
-    question: "Can I change my plan anytime?",
+    question: "How is the Script Generator pricing calculated?",
     answer:
-      "Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate any billing differences.",
+      "Script Generator pricing is based on characters. You only pay for the number of characters used in your scripts, whether short-form or long-form.",
   },
   {
     id: 2,
-    question: "What happens if I exceed my monthly limits?",
+    question: "How is the Voice Generator pricing calculated?",
     answer:
-      "You'll receive notifications as you approach your limits. You can either upgrade your plan or purchase additional credits to continue using the service.",
+      "Voice Generator also follows a character-based pricing model. Charges are applied according to the number of characters in the generated voiceover.",
   },
   {
     id: 3,
-    question: "Do you offer refunds?",
+    question: "How is the Image Generator pricing calculated?",
     answer:
-      "We offer a 30-day money-back guarantee for all paid plans. If you're not satisfied, contact our support team for a full refund.",
+      "Image Generator uses a credits-based system. Each image generation consumes a certain number of credits, depending on the style, aspect ratio, and resolution you choose.",
   },
   {
     id: 4,
-    question: "Can I use generated voices commercially?",
+    question: "Are there different plans available?",
     answer:
-      "Yes, all paid plans include commercial usage rights. The free plan is for personal use only and includes a watermark.",
+      "Yes. We offer standard monthly plans as well as separate plans for Script, Voice, and Image Generators. In addition, custom plans are available for users with specific needs.",
   },
-]
+  {
+    id: 5,
+    question: "Do you provide Enterprise or fully custom plans?",
+    answer:
+      "Yes. For large-scale or specialized requirements, we offer fully customizable Enterprise plans. You can contact our team to discuss your needs and get a tailored package.",
+  },
+];
