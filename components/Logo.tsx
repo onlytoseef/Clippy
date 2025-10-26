@@ -2,7 +2,7 @@ import Image from "next/image"
 
 const Logo = () => {
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
             <Image
                 src="/logo.webp"
                 alt="Clippy logo"

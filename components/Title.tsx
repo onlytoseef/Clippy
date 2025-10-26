@@ -7,13 +7,15 @@ interface TitleProps {
   highlight?: string
   subheading?: string
   className?: string
+  isHero?: boolean
 }
 
 const Title = ({
   heading,
   highlight,
   subheading,
-  className = "text-4xl md:text-5xl",
+  className = "",
+  isHero = false,
 }: TitleProps) => {
   return (
     <motion.div
@@ -23,9 +25,9 @@ const Title = ({
       transition={{ duration: 0.8 }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <h2 className={`${className} font-bold text-gray-800 mb-4`}>
+      <h2 className={`${className} font-bold text-foreground mb-4 ${isHero ? "text-7xl" : "text-4xl md:text-5xl"}`}>
         {heading}{" "}
-        {highlight && <span className="text-primary">{highlight}</span>}
+        {highlight && <span className={`font-semibold ${isHero ? "text-7xl" : "text-5xl md:text-[55px]"}  tracking-wider text-accent`}>{highlight}</span>}
       </h2>
       {subheading && (
         <p className="text-lg text-foreground/80 max-w-3xl mx-auto">
