@@ -1,16 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleAuth } from 'google-auth-library';
 
-// Make sure to set your environment variables in .env.local
 const PROJECT_ID = process.env.GCP_PROJECT_ID!;
-const REGION = process.env.GCP_REGION || "us-east5";
+const LOCATION = process.env.GCP_REGION || "us-east5";
+const MODEL = "claude-3-7-sonnet@20250219";
 
-// Vertex AI REST API endpoint for Claude
-const VERTEX_AI_URL = `https://${REGION}-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${REGION}/publishers/anthropic/models/claude-3-5-sonnet@20240620:generateContent`;
+// Determine endpoint based on location (as per Vertex AI docs)
+const ENDPOINT = LOCATION === "global" 
+  ? "https://aiplatform.googleapis.com" 
+  : `https://${LOCATION}-aiplatform.googleapis.com`;
 
-// Initialize Google Auth
+// Claude on Vertex AI endpoint
+const VERTEX_AI_URL = `${ENDPOINT}/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/anthropic/models/${MODEL}:streamRawPredict`;
+
+// Setup Google Auth with Application Default Credentials
 const auth = new GoogleAuth({
-  scopes: ['https://www.googleapis.com/auth/cloud-platform']
+  scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
 });
 
 export async function POST(req: NextRequest) {
@@ -31,14 +37,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
     }
 
-    // Check required fields
     if (!channelName?.trim() || !targetAudienceAge?.trim() || !language?.trim() || !scriptLength?.trim() || !targetMarket?.trim()) {
       return NextResponse.json({ error: "All required fields must be filled" }, { status: 400 });
     }
-
-    const scriptType = selectedType || 'custom';
-    const tone = selectedTone || 'natural';
-    const duration = selectedDuration || 'flexible';
 
     const fullPrompt = `You are an expert YouTube scriptwriter with strong knowledge of storytelling, audience engagement, and content structure. I am creating a video with the following details. Please use them to generate a well-researched, high-retention script.
 
@@ -72,7 +73,19 @@ A complete, ready-to-use YouTube script that:
 
 Please generate a high-quality YouTube script following these guidelines.`;
 
-    // Prepare the request body for Vertex AI REST API
+    console.log('Attempting to get access token...');
+    const client = await auth.getClient();
+    const accessToken = await client.getAccessToken();
+
+    if (!accessToken.token) {
+      console.error('Failed to get access token');
+      return NextResponse.json({ error: "Failed to get access token" }, { status: 500 });
+    }
+
+    console.log('Access token obtained successfully');
+    console.log('Making request to Vertex AI URL:', VERTEX_AI_URL);
+
+    // Gemini API format
     const requestBody = {
       contents: [
         {
@@ -88,15 +101,10 @@ Please generate a high-quality YouTube script following these guidelines.`;
         temperature: 0.7,
         topK: 40,
         topP: 0.95,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 4096,
       }
     };
 
-    // Get access token for authentication
-    const client = await auth.getClient();
-    const accessToken = await client.getAccessToken();
-
-    // Make the API call to Vertex AI
     const response = await fetch(VERTEX_AI_URL, {
       method: 'POST',
       headers: {
@@ -106,31 +114,39 @@ Please generate a high-quality YouTube script following these guidelines.`;
       body: JSON.stringify(requestBody),
     });
 
+    console.log('Response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.text();
       console.error('Vertex AI API error:', errorData);
       return NextResponse.json(
-        { error: "Failed to generate script from Vertex AI" },
+        { error: "Failed to generate script", details: errorData },
         { status: response.status }
       );
     }
 
     const data = await response.json();
-
-    // Extract the generated script from the response
-    const generatedScript = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    console.log('Response data:', JSON.stringify(data).substring(0, 200));
+    
+    // Claude response format (Anthropic on Vertex AI)
+    const generatedScript = data.content?.[0]?.text;
 
     if (!generatedScript) {
-      return NextResponse.json(
-        { error: "No script generated" },
-        { status: 500 }
-      );
+      console.error('No script in response:', data);
+      return NextResponse.json({ error: "No script generated", responseData: data }, { status: 500 });
     }
 
     return NextResponse.json({ script: generatedScript });
 
   } catch (error: any) {
-    console.error("Claude API error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Claude Sonnet 4 API error - Full details:", error);
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    return NextResponse.json({ 
+      error: error.message || "Internal server error",
+      errorType: error.name,
+      details: error.cause?.message || "No additional details"
+    }, { status: 500 });
   }
 }
