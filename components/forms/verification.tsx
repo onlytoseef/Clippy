@@ -9,40 +9,50 @@ import Header from "../auth/header"
 import Title from "../auth/Title"
 import { CodeFormData, codeSchema } from "@/validations/auth"
 import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
+import { useVerifyEmail, useResendCode } from "@/hooks/useAuth"
 
 export default function VerificationForm() {
+  const searchParams = useSearchParams()
+  const email = searchParams.get("email") || ""
+
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<CodeFormData>({
     resolver: zodResolver(codeSchema),
     defaultValues: {
-      code: ""
-    }
-  });
+      code: "",
+    },
+  })
 
-  // Inside VerificationForm component
   const [timer, setTimer] = useState(0)
 
+  // ✅ Hook for verification
+  const verifyEmailMutation = useVerifyEmail()
+  // ✅ Hook for resend
+  const resendVerificationMutation = useResendCode()
+
+  // Handle submit
+  const onSubmit = (data: CodeFormData) => {
+    verifyEmailMutation.mutate({ email, code: data.code })
+  }
+
+  // Handle resend
   const handleResend = () => {
-    console.log("Resend code API call")
-    setTimer(30) // 30 sec countdown start
+    resendVerificationMutation.mutate(email)
+    setTimer(30)
   }
 
   // Countdown effect
   useEffect(() => {
     if (timer > 0) {
-      const interval = setInterval(() => {
-        setTimer((prev) => prev - 1)
-      }, 1000)
+      const interval = setInterval(() => setTimer((prev) => prev - 1), 1000)
       return () => clearInterval(interval)
     }
   }, [timer])
 
-  const onSubmit = (data: CodeFormData) => {
-    console.log("Verification code submitted:", data)
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-hero">
@@ -60,11 +70,11 @@ export default function VerificationForm() {
           />
 
           {/* Right side */}
-          <div className="w-full md:w-3/5  p-8 flex flex-col justify-center">
+          <div className="w-full md:w-3/5 p-8 flex flex-col justify-center">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <Title
                 title="Check your email"
-                subTitle="We’ve sent a 6-digit verification code to your email address. Enter it below to continue."
+                subTitle={`We’ve sent a 6-digit verification code to ${email}. Enter it below to continue.`}
               />
 
               <Input
@@ -78,11 +88,13 @@ export default function VerificationForm() {
 
               <div className="pt-2">
                 <Button
+                  type="submit"
                   variant="default"
                   size="xl"
                   className="w-full rounded-full"
+                  disabled={verifyEmailMutation.isPending}
                 >
-                  Verify
+                  {verifyEmailMutation.isPending ? "Verifying..." : "Verify"}
                 </Button>
               </div>
 
@@ -92,16 +104,16 @@ export default function VerificationForm() {
                 <button
                   type="button"
                   onClick={handleResend}
-                  disabled={timer > 0} // disable when timer is active
-                  className={`${timer > 0
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-accent hover:text-primary font-medium"
-                    }`}
+                  disabled={timer > 0}
+                  className={`${
+                    timer > 0
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-accent hover:text-primary font-medium"
+                  }`}
                 >
                   {timer > 0 ? `Resend in ${timer}s` : "Resend"}
                 </button>
               </p>
-
             </form>
           </div>
         </div>

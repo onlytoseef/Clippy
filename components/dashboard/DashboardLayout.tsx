@@ -76,7 +76,7 @@ export function DashboardLayout({ children, activeTab, onTabChange }: DashboardL
           <div className="p-4 sm:p-6 border-b border-border">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl flex items-center justify-center">
                   <Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
@@ -112,7 +112,7 @@ export function DashboardLayout({ children, activeTab, onTabChange }: DashboardL
                     }}
                     className={`w-full text-left p-3 sm:p-4 rounded-xl transition-all touch-manipulation ${
                       isActive 
-                        ? 'bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30' 
+                        ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-orange-500/40' 
                         : 'hover:bg-secondary/50 active:bg-secondary/70'
                     }`}
                     whileHover={{ scale: 1.02 }}
@@ -120,10 +120,10 @@ export function DashboardLayout({ children, activeTab, onTabChange }: DashboardL
                   >
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div className={`p-2 rounded-lg ${
-                        isActive ? 'bg-purple-500/20' : 'bg-secondary'
+                        isActive ? 'bg-orange-500/20' : 'bg-secondary'
                       }`}>
                         <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                          isActive ? 'text-purple-400' : 'text-muted-foreground'
+                          isActive ? 'text-orange-400' : 'text-muted-foreground'
                         }`} />
                       </div>
                       <div>
@@ -190,23 +190,22 @@ export function DashboardLayout({ children, activeTab, onTabChange }: DashboardL
                 <span className="text-xs sm:text-sm">AI Models Online</span>
               </div>
               
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full"></div>
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="p-4 sm:p-6">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              {children}
-            </motion.div>
-          </div>
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="h-full flex-1"
+          >
+            {children}
+          </motion.div>
         </main>
       </div>
     </div>

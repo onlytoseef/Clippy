@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ChevronDown, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Logo from "./Logo"
 import Link from "next/link"
@@ -26,32 +26,32 @@ export function Navbar() {
       className="sticky top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           <Logo />
 
           {/* Desktop links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navLinks.map(({ label, href,  }) => (
               <Link
                 key={label}
                 href={href}
                 className="flex items-center space-x-1 text-foreground hover:text-primary cursor-pointer transition-colors"
               >
-                <span>{label}</span>
+                <p>{label}</p>
                
               </Link>
             ))}
           </div>
 
           {/* Desktop actions */}
-          <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost" className="text-foreground hover:bg-primary hover:text-white">
+          <div className="hidden md:flex items-center space-x-2">
+            <Button variant="ghost" size="sm" className="text-foreground hover:bg-primary hover:text-white">
               Contact Sales
             </Button>
             <Link href="/auth/login">
               <Button
                 variant="default"
-                size="lg"
+                size="sm"
               >
                 Log In / Sign Up
               </Button>
@@ -92,9 +92,6 @@ export function Navbar() {
             </div>
 
             <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-              <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
-                Contact Sales
-              </Button>
               <Link href="/auth/login">
                 <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
                   Login
