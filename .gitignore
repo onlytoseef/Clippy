@@ -47,3 +47,28 @@ service-account-key.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+
+
+# Generated content (large files)
+public/generated-audio/*.wav
+public/generated-audio/*.mp3
+public/generated-images/*.png
+public/generated-images/*.jpg
+public/generated-videos/*.mp4
+
+# Keep .gitkeep files
+!public/generated-audio/.gitkeep
+!public/generated-images/.gitkeep
+!public/generated-videos/.gitkeep
+
+# Service account (already there but verify)
+*.json
+!package.json
+!tsconfig.json
+!jsconfig.json
+
+# Large dependencies
+node_modules/
+.next/
