@@ -1,22 +1,38 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Menu, X } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import Logo from "./Logo"
-import Link from "next/link"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
+import Logo from "./Logo";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import ProfileDropdown from "./ui/profile-dropdown";
+import { useGetUser } from "@/hooks/useAuth";
+import PlanDialog from "./dialogs/plan";
+
+const NAV_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Contact", href: "/contact" },
+];
 
 export function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const { data } = useGetUser();
 
-  const navLinks = [
-    { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
-    { label: "Pricing", href: "/pricing" },
-    { label: "Contact", href: "/contact" },
-   
-  ]
+  useEffect(() => {
+    setToken(localStorage.getItem("auth_token_x"));
+  }, []);
+
+  const closeMobileMenu = () => setMobileOpen(false);
+
+  const handleDashboardClick = (e: React.MouseEvent) => {
+    if (data?.plan === null) {
+      e.preventDefault();
+      setShowDialog(true);
+    }
+  };
 
   return (
     <motion.nav
@@ -53,59 +69,59 @@ export function Navbar() {
                 variant="default"
                 size="sm"
               >
-                Log In / Sign Up
+                {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </Button>
-            </Link>
+            </div>
           </div>
-
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden text-foreground hover:text-primary transition-colors"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
         </div>
-      </div>
 
-      {/* Mobile dropdown menu */}
-      <AnimatePresence>
+        {/* Mobile Menu */}
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-background/95 backdrop-blur-md border-t border-border px-4 pt-4 pb-6 space-y-4"
-          >
-            <div className="flex flex-col space-y-4">
-              {navLinks.map(({ label, href }) => (
+          <div className="md:hidden bg-background/95 backdrop-blur-md border-t border-border overflow-hidden pb-100">
+            <div className="py-4 px-4 flex flex-col space-y-4">
+              {NAV_LINKS.map(({ label, href }) => (
                 <Link
                   key={label}
                   href={href}
-                  className="flex items-center justify-between text-foreground hover:text-primary transition-colors"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={closeMobileMenu}
+                  className="text-foreground hover:text-primary transition-colors text-center text-base py-2"
                 >
-                  <span>{label}</span>
+                  {label}
                 </Link>
               ))}
-            </div>
 
-            <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-              <Link href="/auth/login">
-                <Button variant="ghost" className="w-full text-foreground hover:bg-primary hover:text-white">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button variant="default" className="w-full">
-                  Sign Up
-                </Button>
-              </Link>
+              {token && (
+                <Link
+                  href="/dashboard"
+                  onClick={(e) => {
+                    closeMobileMenu();
+                    handleDashboardClick(e);
+                  }}
+                  className="text-foreground hover:text-primary text-center transition-colors text-base py-2"
+                >
+                  Dashboard
+                </Link>
+              )}
+
+              {!token && (
+                <div className="flex flex-col items-center">
+                  <div className="border-t border-border my-2" />
+                  <Link href="/auth/login" onClick={closeMobileMenu}>
+                    <Button variant="default" size="lg" className="w-full max-w-40">
+                      Log In / Sign Up
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </motion.nav>
-  )
+      </nav>
+
+      <PlanDialog
+        showDialog={showDialog}
+        setShowDialog={setShowDialog}
+      />
+    </>
+  );
 }
