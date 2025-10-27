@@ -23,9 +23,6 @@ export async function POST(req: NextRequest) {
   try {
     const {
       prompt,
-      selectedType,
-      selectedTone,
-      selectedDuration,
       channelName,
       targetAudienceAge,
       language,
@@ -138,15 +135,16 @@ Please generate a high-quality YouTube script following these guidelines.`;
 
     return NextResponse.json({ script: generatedScript });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     console.error("Claude Sonnet 4 API error - Full details:", error);
-    console.error("Error name:", error.name);
-    console.error("Error message:", error.message);
-    console.error("Error stack:", error.stack);
+    console.error("Error name:", err.name);
+    console.error("Error message:", err.message);
+    console.error("Error stack:", err.stack);
     return NextResponse.json({ 
-      error: error.message || "Internal server error",
-      errorType: error.name,
-      details: error.cause?.message || "No additional details"
+      error: err.message || "Internal server error",
+      errorType: err.name,
+      details: "cause" in err ? (err.cause as Error)?.message : "No additional details"
     }, { status: 500 });
   }
 }
