@@ -93,10 +93,10 @@ export function Navbar() {
                 size="icon"
                 onClick={() => setMobileOpen(!mobileOpen)}
                 aria-label="Toggle menu"
-                asChild
               >
                 {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </Button>
+
             </div>
           </div>
         </div>
