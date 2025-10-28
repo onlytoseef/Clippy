@@ -35,65 +35,39 @@ export function Navbar() {
   };
 
   return (
-    <>
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Logo />
+    <motion.nav
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="sticky top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14">
+          <Logo />
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              {NAV_LINKS.map(({ label, href }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  className="text-foreground hover:text-primary transition-colors"
-                >
-                  {label}
-                </Link>
-              ))}
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center space-x-6">
+            {navLinks.map(({ label, href,  }) => (
+              <Link
+                key={label}
+                href={href}
+                className="flex items-center space-x-1 text-foreground hover:text-primary cursor-pointer transition-colors"
+              >
+                <p>{label}</p>
+               
+              </Link>
+            ))}
+          </div>
 
-              {token && (
-                <Link
-                  href="/dashboard"
-                  onClick={handleDashboardClick}
-                  className="text-foreground hover:text-primary transition-colors"
-                >
-                  Dashboard
-                </Link>
-              )}
-            </div>
-
-            {/* Desktop Actions */}
-            <div className="hidden md:flex items-center space-x-3">
-              {token ? (
-                <ProfileDropdown
-                  setToken={setToken}
-                  setMobileOpen={setMobileOpen}
-                />
-              ) : (
-                <Link href="/auth/login">
-                  <Button variant="default" size="lg">
-                    Log In / Sign Up
-                  </Button>
-                </Link>
-              )}
-            </div>
-
-            {/* Mobile Actions */}
-            <div className="md:hidden flex items-center gap-3">
-              {token && (
-                <ProfileDropdown
-                  setToken={setToken}
-                  setMobileOpen={setMobileOpen}
-                />
-              )}
+          {/* Desktop actions */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Button variant="ghost" size="sm" className="text-foreground hover:bg-primary hover:text-white">
+              Contact Sales
+            </Button>
+            <Link href="/auth/login">
               <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setMobileOpen(!mobileOpen)}
-                aria-label="Toggle menu"
-                asChild
+                variant="default"
+                size="sm"
               >
                 {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </Button>

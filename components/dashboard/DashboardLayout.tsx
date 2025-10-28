@@ -196,17 +196,16 @@ export function DashboardLayout({ children, activeTab, onTabChange }: DashboardL
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="p-4 sm:p-6">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              {children}
-            </motion.div>
-          </div>
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="h-full flex-1"
+          >
+            {children}
+          </motion.div>
         </main>
       </div>
     </div>

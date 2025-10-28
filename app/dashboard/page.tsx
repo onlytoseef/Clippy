@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { TopNavDashboard } from "@/components/dashboard/TopNavDashboard"
 import { 
   ScriptGenerationPage,
   ImageGenerationPage,
@@ -22,14 +22,21 @@ export default function DashboardPage() {
         return <AudioGenerationPage />
       case 'video':
         return <VideoGenerationPage />
+      case 'account':
+        return <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Account Settings</h2>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">Account page coming soon...</p>
+          </div>
+        </div>
       default:
-        return <ScriptGenerationPage />
+        return <AudioGenerationPage />
     }
   }
 
   return (
-    <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab}>
+    <TopNavDashboard activeTab={activeTab} onTabChange={setActiveTab}>
       {renderContent()}
-    </DashboardLayout>
+    </TopNavDashboard>
   )
 }
