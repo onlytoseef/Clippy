@@ -69,7 +69,10 @@ export function Navbar() {
                       Dashboard
                     </Button>
                   </Link>
-                  <ProfileDropdown />
+                  <ProfileDropdown 
+                    setToken={setToken}
+                    setMobileOpen={setMobileOpen}
+                  />
                 </>
               ) : (
                 <>
