@@ -8,6 +8,7 @@ import Title from "@/components/Title";
 import FaqList from "@/components/FaqList";
 import { useGetPlans } from "@/hooks/usePlans";
 import SkeletonLoader from "@/components/common/SkeletonLoader";
+import { Pricing } from "@/types/pricing";
 
 export default function PricingPage() {
   const { data = [], isLoading } = useGetPlans();
@@ -34,7 +35,7 @@ export default function PricingPage() {
               ?
               <SkeletonLoader variant="pricing" />
               :
-              plans.map((plan: any, index: number) => (
+              plans.map((plan: Pricing, index: number) => (
                 <motion.div
                   key={plan.name}
                   initial={{ opacity: 0, y: 20 }}
