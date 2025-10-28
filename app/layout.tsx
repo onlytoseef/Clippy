@@ -1,9 +1,8 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { Footer } from "@/components/Footer"
-import { Provider } from "@/providers/provider"
-
+import { ConditionalFooter } from "@/components/ConditionalFooter"
+import { Providers } from "./providers"
 
 export const metadata: Metadata = {
   title: "Clippy - AI Voice Generator",
@@ -20,13 +19,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Nunito:wght@400;500;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&family=Sniglet:wght@400;800&display=swap" rel="stylesheet" />  
       </head>
-      <body className="overflow-x-hidden">
-        <Provider>
+      <body>
+        <Providers>
           {children}
-          <Footer />
-        </Provider>
+          <ConditionalFooter />
+        </Providers>
       </body>
     </html>
   )

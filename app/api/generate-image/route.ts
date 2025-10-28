@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
       numberOfImages = 1,
       sampleImageSize = "1K",
       aspectRatio = "1:1",
-      personGeneration = "allow_adult"
+      personGeneration = "allow_all"
     } = await request.json()
 
     // Validation
