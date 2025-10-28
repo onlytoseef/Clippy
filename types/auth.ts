@@ -6,3 +6,9 @@ export interface SignUpFormData {
   confirmPassword: string
   agreeToTerms: boolean
 }
+
+export interface UpdateUserPayload {
+  name ?: string
+  phone ?: string
+  address ?: string
+}
