@@ -16,3 +16,7 @@ export interface Pricing {
   video_credits: number;
   video_description?: string;
 };
+
+export interface Plan {
+  plans: Pricing[];
+};
