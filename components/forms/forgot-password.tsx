@@ -80,7 +80,7 @@ export default function ForgotPasswordForm() {
                             <div>
                                 <h1 className="text-3xl font-bold text-foreground">Forgot Password?</h1>
                                 <p className="text-sm text-foreground/60 mt-1">
-                                    No worries! Enter your email and we'll send you a reset code.
+                                    No worries! Enter your email and we&apos;ll send you a reset code.
                                 </p>
                             </div>
                         ) : (
@@ -92,7 +92,7 @@ export default function ForgotPasswordForm() {
                                 </div>
                                 <h1 className="text-3xl font-bold text-foreground">Check Your Email</h1>
                                 <p className="text-sm text-foreground/60 mt-1">
-                                    We've sent a verification code to <span className="font-semibold text-foreground">{email}</span>
+                                    We&apos;ve sent a verification code to <span className="font-semibold text-foreground">{email}</span>
                                 </p>
                             </div>
                         )}
@@ -131,7 +131,7 @@ export default function ForgotPasswordForm() {
                         <div className="space-y-4">
                             <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
                                 <p className="text-sm text-foreground/80">
-                                    Didn't receive the code? Check your spam folder or{' '}
+                                    Didn&apos;t receive the code? Check your spam folder or{' '}
                                     <button
                                         onClick={() => setIsSubmitted(false)}
                                         className="text-primary hover:text-accent font-semibold underline"
@@ -177,7 +177,7 @@ export default function ForgotPasswordForm() {
                     </div>
                     <h2 className="text-4xl font-bold text-white">Password Recovery</h2>
                     <p className="text-white/80 text-lg">
-                        Don't worry! It happens to the best of us. We'll help you get back into your account.
+                        Don&apos;t worry! It happens to the best of us. We&apos;ll help you get back into your account.
                     </p>
                 </div>
             </motion.div>
