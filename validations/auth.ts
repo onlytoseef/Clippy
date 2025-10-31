@@ -1,7 +1,15 @@
 import { z } from "zod"
 
+// Gmail-only email validation
+const gmailOnlyEmail = z
+  .string()
+  .email("Enter a valid email address")
+  .refine((email) => email.endsWith("@gmail.com"), {
+    message: "Only Gmail addresses are allowed",
+  });
+
 export const loginSchema = z.object({
-  email: z.string().email("Enter a valid email address"),
+  email: gmailOnlyEmail,
   password: z.string().min(6, "Password must be at least 6 characters"),
   rememberMe: z.boolean().optional(),
   user_type: z.string(),
@@ -19,7 +27,7 @@ export type CodeFormData = z.infer<typeof codeSchema>
 export const step1Schema = z.object({
   firstName: z.string().min(2, "First name is required"),
   lastName: z.string().min(2, "Last name is required"),
-  email: z.string().email("Invalid email"),
+  email: gmailOnlyEmail,
   user_type: z.string(),
 });
 

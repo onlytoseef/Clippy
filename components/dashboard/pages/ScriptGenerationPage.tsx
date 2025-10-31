@@ -150,16 +150,14 @@ export function ScriptGenerationPage() {
 
     setIsGenerating(true)
     try {
-      const response = await fetch('/api/generate-script', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/generation/script`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           prompt,
-          selectedType,
-          selectedTone,
-          selectedDuration,
           channelName,
           targetAudienceAge,
           language,
@@ -173,7 +171,7 @@ export function ScriptGenerationPage() {
       }
 
       const data = await response.json()
-      setGeneratedScript(data.script)
+      setGeneratedScript(data.data.script)
     } catch (error) {
       console.error('Error generating script:', error)
       alert('Failed to generate script. Please try again.')

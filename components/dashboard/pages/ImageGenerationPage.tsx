@@ -118,11 +118,12 @@ export function ImageGenerationPage() {
       console.log('Image size:', selectedSize)
       console.log('Aspect ratio:', selectedAspectRatio)
       
-      const response = await fetch('/api/generate-image', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/generation/image`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           prompt: prompt.trim(),
           numberOfImages: numberOfImages,
@@ -135,16 +136,16 @@ export function ImageGenerationPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate images')
+        throw new Error(data.message || 'Failed to generate images')
       }
 
       console.log('✅ Images received from Google AI!')
-      console.log('Generated images:', data.images.length)
-      console.log('Tokens used:', data.tokensUsed)
+      console.log('Generated images:', data.data.images.length)
+      console.log('Tokens used:', data.data.tokensUsed)
 
       // Update state with generated images
-      setGeneratedImages(data.images)
-      setTokensUsed(prev => prev + data.tokensUsed)
+      setGeneratedImages(data.data.images)
+      setTokensUsed(prev => prev + data.data.tokensUsed)
 
     } catch (error: unknown) {
       console.error('❌ Generation failed:', error)

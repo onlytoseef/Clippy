@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/toast"
 import { ProfileSchema } from "@/validations/profile"
 import { AxiosError } from "axios"
+import { showToast } from "@/lib/toast"
 
 export const useLogin = () => {
     const router = useRouter()
@@ -13,28 +14,30 @@ export const useLogin = () => {
     return useMutation({
         mutationFn: login,
         onSuccess: (data: any) => {
-            toast({
-                title: "Login Successful",
-            })
-            router.push("/")
+            showToast.success("Login successful")
+            
+            // Store token
             localStorage.setItem("auth_token_x", data.token)
+            
+            // Redirect based on subscription status
+            const redirectTo = data.redirectTo || "/pricing"
+            router.push(redirectTo)
         },
         onError: (err: AxiosError<ErrorResponse>) => {
             const response = err?.response?.data
 
+            // Check if it's a network error or server is down
+            if (err.code === 'ERR_NETWORK' || !err.response) {
+                showToast.error("Internal server error. Please try again later.")
+                return
+            }
+
             if (response?.data?.needsVerification) {
                 // Redirect to verification page with email
                 router.push(`/auth/verify?email=${response.data.email}`)
-                toast({
-                    title: "Verification Required",
-                    description: "We sent you a code. Please verify your email.",
-                })
+                showToast.warning("Verification required. Please check your email.")
             } else {
-                toast({
-                    title: "Login Failed",
-                    description: `${response?.message || "Something went wrong"}`,
-                    variant: "destructive",
-                })
+                showToast.error(response?.message || "Login failed. Please try again.")
             }
         },
     })
@@ -45,18 +48,34 @@ export const useSignup = () => {
 
     return useMutation({
         mutationFn: signup,
-        onSuccess: () => {
-            toast({
-                title: "Signup Successful",
-            })
-            router.push("/auth/login")
+        onSuccess: (data: any) => {
+            // Extract email from response
+            const email = data?.data?.email || "";
+            
+            console.log("✅ Signup successful, response:", data);
+            console.log("📧 Extracted email:", email);
+            
+            showToast.success("Signup successful. Please check your email for verification code.")
+            
+            if (!email) {
+                console.error("❌ No email in response!");
+                showToast.error("Email not found in response. Please try again.")
+                return;
+            }
+            
+            // Redirect to verification page with email
+            router.push(`/auth/verify?email=${encodeURIComponent(email)}`)
         },
         onError: (err: AxiosError<ErrorResponse>) => {
-            toast({
-                title: "Signup Failed",
-                description: `${err?.response?.data?.message || "Something went wrong"}`,
-                variant: "destructive",
-            })
+            const response = err?.response?.data
+
+            // Check if it's a network error or server is down
+            if (err.code === 'ERR_NETWORK' || !err.response) {
+                showToast.error("Internal server error. Please try again later.")
+                return
+            }
+
+            showToast.error(response?.message || "Signup failed. Please try again.")
         },
     })
 }
@@ -66,19 +85,27 @@ export const useVerifyEmail = () => {
 
     return useMutation({
         mutationFn: verifyEmail,
-        onSuccess: () => {
-            toast({
-                title: "Verification Successful",
-                description: "Your email has been verified. Please log in.",
-            })
-            router.push("/")
+        onSuccess: (data: any) => {
+            showToast.success("Email verified successfully. Welcome!")
+            
+            // Store token from response
+            if (data?.data) {
+                localStorage.setItem("auth_token_x", data.data.token || "")
+            }
+            
+            // Redirect to dashboard
+            router.push("/dashboard")
         },
-        onError: (err: any) => {
-            toast({
-                title: "Verification Failed",
-                description: `${err?.response?.data?.message || "Invalid code"}`,
-                variant: "destructive",
-            })
+        onError: (err: AxiosError<ErrorResponse>) => {
+            const response = err?.response?.data
+
+            // Check if it's a network error or server is down
+            if (err.code === 'ERR_NETWORK' || !err.response) {
+                showToast.error("Internal server error. Please try again later.")
+                return
+            }
+
+            showToast.error(response?.message || "Invalid verification code")
         },
     })
 }
@@ -109,17 +136,18 @@ export const useResendCode = () => {
     return useMutation({
         mutationFn: resendCode,
         onSuccess: () => {
-            toast({
-                title: "Code Resent",
-                description: "A new code has been sent to your email.",
-            })
+            showToast.success("Verification code resent to your email")
         },
-        onError: (error: any) => {
-            toast({
-                title: "Code Resent Failed",
-                description: `${error?.response?.data?.message || "Something went wrong while resending the code."}`,
-                variant: "destructive",
-            })
+        onError: (err: AxiosError<ErrorResponse>) => {
+            const response = err?.response?.data
+
+            // Check if it's a network error or server is down
+            if (err.code === 'ERR_NETWORK' || !err.response) {
+                showToast.error("Internal server error. Please try again later.")
+                return
+            }
+
+            showToast.error(response?.message || "Failed to resend code")
         },
     })
 }

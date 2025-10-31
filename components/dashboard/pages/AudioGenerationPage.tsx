@@ -109,11 +109,12 @@ export function AudioGenerationPage() {
     setIsGenerating(true)
     
     try {
-      const response = await fetch('/api/generate-audio', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/generation/audio`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           text: prompt.trim(),
           voice: selectedVoice || "Zephyr",

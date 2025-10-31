@@ -8,6 +8,7 @@ import { signIn } from "@/auth"
 import Footer from "../auth/footer"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
+import Link from "next/link"
 import { useLogin } from "@/hooks/useAuth"
 import Image from "next/image"
 
@@ -92,12 +93,12 @@ export default function LoginForm() {
                                     Remember me
                                 </label>
                             </div>
-                            <a
-                                href="#"
+                            <Link
+                                href="/auth/forgot-password"
                                 className="text-accent hover:text-primary transition-colors font-medium"
                             >
                                 Forgot password?
-                            </a>
+                            </Link>
                         </div>
 
                         {/* Submit Button */}

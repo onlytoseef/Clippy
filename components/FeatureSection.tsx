@@ -4,8 +4,8 @@ import Card from "./Card"
 
 export function FeaturesSection() {
     return (
-        <section className="py-24 bg-background relative overflow-hidden">
-            <div className="container mx-auto px-4 relative z-10">
+        <section className="py-12 md:py-16 lg:py-20 xl:py-24 bg-background relative overflow-hidden">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <Title
                     heading="Why Choose"
                     highlight="Clippy"

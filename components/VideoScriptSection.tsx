@@ -39,30 +39,30 @@ export default function VideoScriptGenerator() {
   }
 
   return (
-    <section className="relative min-h-screen py-20 px-14 flex items-center justify-center bg-background">
+    <section className="relative min-h-screen py-12 md:py-16 lg:py-20 px-4 sm:px-6 md:px-8 lg:px-14 flex items-center justify-center bg-background">
       <div className="container mx-auto max-w-7xl">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="space-y-8"
+            className="space-y-6 md:space-y-8"
           >
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
 
-              <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                 Generate Video Scripts{" "}
-                <span className="text-primary font-semibold tracking-wider text-7xl">Quickly</span>
+                <span className="text-primary font-semibold tracking-wider text-4xl sm:text-5xl md:text-6xl lg:text-7xl">Quickly</span>
               </h1>
 
-              <p className="text-xl text-foreground/70 leading-relaxed">
+              <p className="text-base md:text-lg lg:text-xl text-foreground/70 leading-relaxed">
                 Create professional video scripts in seconds with AI.
               </p>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 py-4">
+            <div className="grid grid-cols-3 gap-2 md:gap-3 lg:gap-4 py-3 md:py-4">
               {[
                 { value: "10k+", label: "Scripts" },
                 { value: "98%", label: "Satisfaction" },
@@ -73,29 +73,29 @@ export default function VideoScriptGenerator() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="text-center p-4 rounded-xl bg-white/5 border border-white/10"
+                  className="text-center p-2 md:p-3 lg:p-4 rounded-lg md:rounded-xl bg-white/5 border border-white/10"
                 >
-                  <div className="text-2xl font-bold text-primary">{stat.value}</div>
-                  <div className="text-sm text-foreground/60">{stat.label}</div>
+                  <div className="text-lg md:text-xl lg:text-2xl font-bold text-primary">{stat.value}</div>
+                  <div className="text-xs md:text-sm text-foreground/60">{stat.label}</div>
                 </motion.div>
               ))}
             </div>
 
             {/* CTA */}
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <Button
                 size="lg"
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="bg-primary hover:bg-primary/90 text-white font-semibold text-lg px-8 py-6 rounded-xl"
+                className="bg-primary hover:bg-primary/90 text-white font-semibold text-sm md:text-base lg:text-lg px-6 md:px-8 py-5 md:py-6 rounded-xl w-full sm:w-auto"
               >
                 {isGenerating ? (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 md:gap-3">
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                     >
-                      <Zap className="w-5 h-5" />
+                      <Zap className="w-4 h-4 md:w-5 md:h-5" />
                     </motion.div>
                     Generating...
                   </div>

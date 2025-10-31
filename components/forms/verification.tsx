@@ -16,6 +16,14 @@ export default function VerificationForm() {
   const searchParams = useSearchParams()
   const email = searchParams.get("email") || ""
 
+  // Debug: Check if email is received
+  useEffect(() => {
+    console.log("📧 Email from URL:", email)
+    if (!email) {
+      console.error("⚠️ No email found in URL!")
+    }
+  }, [email])
+
   const {
     register,
     handleSubmit,
@@ -36,6 +44,13 @@ export default function VerificationForm() {
 
   // Handle submit
   const onSubmit = (data: CodeFormData) => {
+    console.log("🔍 Submitting verification:", { email, code: data.code })
+    
+    if (!email) {
+      alert("Email is missing! Please go back and sign up again.")
+      return
+    }
+    
     verifyEmailMutation.mutate({ email, code: data.code })
   }
 

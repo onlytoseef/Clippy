@@ -3,12 +3,13 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import Logo from "./Logo"
+import Link from "next/link"
 
 const footerLinks = {
   Product: ["Features", "Pricing", "API", "Documentation"],
   Company: ["About", "Blog", "Careers", "Contact"],
   Resources: ["Help Center", "Community", "Tutorials", "Status"],
-  Legal: ["Privacy", "Terms", "Security", "Compliance"],
+  Legal: ["Privacy", "Terms & Conditions", "Security", "Compliance"],
 }
 
 export function Footer() {
@@ -50,9 +51,15 @@ export function Footer() {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-foreground/80 hover:text-primary transition-colors">
-                      {link}
-                    </a>
+                    {link === "Terms & Conditions" ? (
+                      <Link href="/terms-and-conditions" className="text-foreground/80 hover:text-primary transition-colors">
+                        {link}
+                      </Link>
+                    ) : (
+                      <a href="#" className="text-foreground/80 hover:text-primary transition-colors">
+                        {link}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

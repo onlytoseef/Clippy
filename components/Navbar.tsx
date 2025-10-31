@@ -64,8 +64,8 @@ export function Navbar() {
             <div className="hidden md:flex items-center space-x-2">
               {token ? (
                 <>
-                  <Link href="/dashboard" onClick={handleDashboardClick}>
-                    <Button variant="default" size="sm">
+                  <Link href="/dashboard" onClick={handleDashboardClick} className="cursor-pointer">
+                    <Button variant="default" size="sm" className="cursor-pointer">
                       Dashboard
                     </Button>
                   </Link>
@@ -76,11 +76,11 @@ export function Navbar() {
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" className="text-foreground hover:bg-primary hover:text-white">
+                  <Button variant="ghost" size="sm" className="text-foreground hover:bg-primary hover:text-white cursor-pointer">
                     Contact Sales
                   </Button>
-                  <Link href="/auth/login">
-                    <Button variant="default" size="sm">
+                  <Link href="/auth/login" className="cursor-pointer">
+                    <Button variant="default" size="sm" className="cursor-pointer">
                       Log In / Sign Up
                     </Button>
                   </Link>
